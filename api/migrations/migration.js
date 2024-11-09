@@ -1,4 +1,3 @@
-const { addConstraint } = require("node-pg-migrate/operations/tables"); 
 const { addConstraint } = require("node-pg-migrate");
 
 module.exports={
