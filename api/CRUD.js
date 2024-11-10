@@ -2,6 +2,8 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL, 
   });
 
+//Week two
+
 //Organization
 class organization_controller {
     async create_organization (req, res){
@@ -90,4 +92,4 @@ class position_controller {
 }
 module.exports = new organization_controller ()
 module.exports = new department_controller ()
-module.exports = new position_сontroller ()
+module.exports = new position_controller ()
