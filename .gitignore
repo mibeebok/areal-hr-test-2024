@@ -7,3 +7,7 @@ docs/.env
 # Игнорировать файлы
 package-lock.json
 pockage.json
+package.json
+.env
+docs/.env
+package-lock.json
