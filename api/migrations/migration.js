@@ -121,6 +121,12 @@ module.exports={
         });
 
 
+        //Position
+        pgm.createTable('positions', {
+            id:{ type: 'serial', primaryKey: true },
+            name:{type:'varchar(100)', notNull:true},
+        });
+
 
         //Personnel Operations
         pgm.createTable('personnel_operations', {
