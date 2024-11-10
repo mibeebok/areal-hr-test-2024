@@ -2,4 +2,8 @@
 node_modules/
 
 # Игнорировать файл .env
-.env
+docs/.env
+
+# Игнорировать файлы
+package-lock.json
+pockage.json
