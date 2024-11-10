@@ -235,6 +235,11 @@ class personnel_operations_controller {
             else { 
                 res.status(404).json({ message: 'Опреация не найдена' });}
     }
+    async dismissal_from_work (req, res){
+        const id = req.params.id
+        const personnel_operations = await db.query ('UPDATE dismissal_from_work FROM personnel_operations SET dismissal_from_work = NOT dismissal_from_work WHERE id = $1 RETURNING *', [id])
+        
+    }
 }
 
 //History of change
