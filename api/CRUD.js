@@ -37,27 +37,27 @@ class organization_controller {
 class department_controller {
     async create_department (req, res){
         const{id_organization, parent, name, comment} = req.body
-        const new_department = await db.query('INSERT INTO department (id_organization, parent, name, comment) values ($1, $2, $3, $4) RETURNING *', [id_organization, parent, name, comment])
+        const new_department = await db.query('INSERT INTO departments (id_organization, parent, name, comment) values ($1, $2, $3, $4) RETURNING *', [id_organization, parent, name, comment])
         res.json(new_department.rows[0])
 
     }
     async get_department (req, res){
-        const departments = await db.query('SELECT * FROM department')
+        const departments = await db.query('SELECT * FROM departments')
         res.json(departments.rows)
     }
     async get_one_department (req, res){
         const id = req.params.id
-        const departments = await db.query('SELECT * FROM department WHERE id = $1' [id])
+        const departments = await db.query('SELECT * FROM departments WHERE id = $1' [id])
         res.json(departments.rows)
     }
     async update_department (req, res){
         const {id, name, parent, comment} = req.body
-        const departments = await db.query('UPDATE department set id_organization = $1 parent = $2 name = $3 comment = $4 WHERE id = $5 RETURNING *', [id_organization, parent, name, comment, id])
+        const departments = await db.query('UPDATE departments set id_organization = $1 parent = $2 name = $3 comment = $4 WHERE id = $5 RETURNING *', [id_organization, parent, name, comment, id])
         res.json(departments.rows[0])
     }
     async delete_department (req, res){
         const id = req.params.id
-        const departments = await db.query('DELETE FROM department WHERE id = $1' [id])
+        const departments = await db.query('DELETE FROM departments WHERE id = $1' [id])
         res.json(departments.rows)
     }
 }
@@ -66,27 +66,27 @@ class department_controller {
 class position_controller {
     async create_position (req, res){
         const{name} = req.body
-        const new_position = await db.query('INSERT INTO position (name) values ($1) RETURNING *', [name])
+        const new_position = await db.query('INSERT INTO positions (name) values ($1) RETURNING *', [name])
         res.json(new_position.rows[0])
 
     }
     async get_position(req, res){
-        const positions = await db.query('SELECT * FROM position')
+        const positions = await db.query('SELECT * FROM positions')
         res.json(positions.rows)
     }
     async get_one_positions (req, res){
         const id = req.params.id
-        const positions = await db.query('SELECT * FROM position WHERE id = $1' [id])
+        const positions = await db.query('SELECT * FROM positions WHERE id = $1' [id])
         res.json(positions.rows)
     }
     async update_positions (req, res){
         const {id, name, comment} = req.body
-        const positions = await db.query('UPDATE position set name = $1 WHERE id = $7 RETURNING *', [name, id])
+        const positions = await db.query('UPDATE positions set name = $1 WHERE id = $7 RETURNING *', [name, id])
         res.json(positions.rows[0])
     }
     async delete_position (req, res){
         const id = req.params.id
-        const positions = await db.query('DELETE FROM position WHERE id = $1' [id])
+        const positions = await db.query('DELETE FROM positions WHERE id = $1' [id])
         res.json(positions.rows)
     }
 }
