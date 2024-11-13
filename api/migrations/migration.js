@@ -34,7 +34,7 @@ module.exports={
         pgm.createTable('files', {
             id:{type: 'serial', primaryKey: true },
             name:{type:'varchar(100)', notNull:true},
-            file:{type: 'varchar(100)', notNull:true},
+            file_path:{type: 'varchar(100)', notNull:true},
         });
 
 
@@ -68,14 +68,6 @@ module.exports={
             }, 
         }); 
 
-        pgm.addConstraint('employees', 'fk7', { 
-            foreignKeys:{ 
-              columns: 'id_scan', 
-              references: 'files(id)', 
-              onDelete: 'CASCADE', 
-            }, 
-        }); 
-
 
 
         //Organizations
@@ -84,6 +76,7 @@ module.exports={
             name:{type: 'varchar(100)', notNull:true},
             comment:{type: 'varchar(1000)', notNull:true},
         });
+
 
 
 
@@ -115,17 +108,12 @@ module.exports={
             }, 
         });
 
+        //Position
         pgm.createTable('positions', {
             id:{ type: 'serial', primaryKey: true },
             name :{type: 'varchar(100)', notNull:true},
         });
 
-
-        //Position
-        pgm.createTable('positions', {
-            id:{ type: 'serial', primaryKey: true },
-            name:{type:'varchar(100)', notNull:true},
-        });
 
 
         //Personnel Operations
@@ -177,9 +165,16 @@ module.exports={
         //Roles
         pgm.createTable('roles', {
             id:{type: 'serial', primaryKey: true },
-            hr_spacialist:{type:'varchar(50)', notNull:true},
-            administration:{type: 'varchar (50)', notNull:true},
+            id_employees:{type:'integer', notNull:true},
+            code:{type: 'varchar (50)', notNull:true},
         });
+        pgm.addConstraint('roles', 'fk13', { 
+            foreignKeys:{ 
+              columns: 'id_employees', 
+              references: 'employees(id)', 
+              onDelete: 'CASCADE', 
+            }, 
+        }); 
 
 
 
