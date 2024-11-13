@@ -48,8 +48,7 @@ module.exports={
             patronymic:{type: 'varchar(100)', notNull:true},
             date_of_birth:{type: 'varchar(100)', notNull:true},
             id_passport_data:{type: 'integer', notNull:true},
-            id_registration_address:{type: 'integer', notNull:true},
-            id_scan:{type: 'integer', notNull:true},
+            id_registration_address:{type: 'integer', notNull:true}
         });
 
         pgm.addConstraint('employees', 'fk5', { 
