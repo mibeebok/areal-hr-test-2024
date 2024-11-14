@@ -7,9 +7,9 @@ const pool = new Pool({
 //Files
 class FilesController {
     async createFiles (req, res){
-        const{name, file_parh} = req.body
+        const{name, id_employees, file_parh} = req.body
         try{
-        const new_files= await db.query('INSERT INTO files (name, file_parh) values ($1, $2) RETURNING *', [name, file_parh])
+        const new_files= await db.query('INSERT INTO files (name, id_employees, file_parh) values ($1, $2, $3) RETURNING *', [name, id_employees, file_parh])
         res.json(new_files.rows[0])
         }
         catch{
@@ -43,9 +43,9 @@ class FilesController {
         }
     }
     async updateFiles (req, res){
-        const {id, name, file_parhs} = req.body
+        const {id, name, id_employees, file_parh} = req.body
         try{
-        const files = await db.query('UPDATE files set name = $1 file_parh = $2 WHERE id = $3 RETURNING *', [name, file_parh, id])
+        const files = await db.query('UPDATE files set name = $1 id_employees = $2 file_parh = $3 WHERE id = $4 RETURNING *', [name,id_employees, file_parh, id])
         if (files.rows.length > 0) {
             res.json(files.rows);}
             else { 
