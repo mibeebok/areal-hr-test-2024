@@ -30,13 +30,6 @@ module.exports={
         });
 
 
-        //Files
-        pgm.createTable('files', {
-            id:{type: 'serial', primaryKey: true },
-            name:{type:'varchar(100)', notNull:true},
-            file_path:{type: 'varchar(100)', notNull:true},
-        });
-
 
 
 
@@ -66,6 +59,24 @@ module.exports={
               onDelete: 'CASCADE', 
             }, 
         }); 
+
+
+        //Files
+        pgm.createTable('files', {
+            id:{type: 'serial', primaryKey: true },
+            id_employees:{type:'integer', notNull:true},
+            name:{type:'varchar(100)', notNull:true},
+            file_path:{type: 'varchar(100)', notNull:true},
+        });
+
+        pgm.addConstraint('files', 'fk116', { 
+            foreignKeys:{ 
+              columns: 'id_employees', 
+              references: 'employees(id)', 
+              onDelete: 'CASCADE', 
+            }, 
+        }); 
+
 
 
 
