@@ -31,6 +31,9 @@ const updateEmployeesSchema = Joi.object({
 class EmployeesController {
   async createEmployees(req, res) {
     const { error } = createEmployeesSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const {
       first_name,
       name,
@@ -66,6 +69,9 @@ class EmployeesController {
   }
   async getOneEmployees(req, res) {
     const { error } = getOneEmployeesSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const id = req.params.id;
     try {
       const employees = await pool.query(
@@ -82,6 +88,9 @@ class EmployeesController {
   }
   async updateEmployees(req, res) {
     const { error } = updateEmployeesSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const {
       first_name,
       name,

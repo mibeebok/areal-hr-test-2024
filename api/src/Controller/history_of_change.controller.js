@@ -35,6 +35,9 @@ const updateHistoryOfChangeSchema = Joi.object({
 class HistoryOfChangeController {
   async createHistoryOfChange(req, res) {
     const { error } = createHistoryOfChangeSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const {
       date_and_time_of_the_operation,
       who_changed_it,
@@ -68,6 +71,9 @@ class HistoryOfChangeController {
   }
   async getOneHistoryOfChange(req, res) {
     const { error } = getOneHistoryOfChangeSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const id = req.params.id;
     try {
       const history_of_changes = await pool.query(
@@ -84,6 +90,9 @@ class HistoryOfChangeController {
   }
   async updateHistoryOfChange(req, res) {
     const { error } = updateHistoryOfChangeSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { id, name, comment } = req.body;
     try {
       const history_of_changes = await pool.query(

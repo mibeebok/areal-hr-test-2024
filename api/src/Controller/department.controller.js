@@ -5,7 +5,7 @@ const pool = new Pool({
 });
 
 //Validate Department
-const Joi = require('joi');
+const Joi = require("joi");
 
 const createDepartmentSchema = Joi.object({
   id_organization: Joi.integer().required(),
@@ -28,6 +28,9 @@ const updateDepartmentSchema = Joi.object({
 class DepartmentController {
   async createDepartments(req, res) {
     const { error } = createDepartmentSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { id_organization, parent, name, comment } = req.body;
     try {
       const departments = await pool.query(
@@ -49,6 +52,9 @@ class DepartmentController {
   }
   async getOneDepartments(req, res) {
     const { error } = getOneDepartmentsSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const id = req.params.id;
     try {
       const departments = await pool.query(
@@ -65,6 +71,9 @@ class DepartmentController {
   }
   async updateDepartments(req, res) {
     const { error } = updateDepartmentSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { id_organization, name, parent, comment, id } = req.body;
     try {
       const departments = await pool.query(

@@ -23,6 +23,9 @@ const updateOrganizationSchema = Joi.object({
 class OrganizationController {
   async createOrganization(req, res) {
     const { error } = createOrganizationSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { name, comment } = req.body;
     try {
       const organizations = await pool.query(
@@ -46,6 +49,9 @@ class OrganizationController {
   }
   async getOneOrganization(req, res) {
     const { error } = getOneOrganizationSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const id = req.params.id;
     try {
       const organizations = await pool.query(
@@ -62,6 +68,9 @@ class OrganizationController {
   }
   async updateOrganization(req, res) {
     const { error } = updateOrganizationSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { id, name, comment } = req.body;
     try {
       const organizations = await pool.query(

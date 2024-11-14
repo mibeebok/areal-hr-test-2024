@@ -26,6 +26,9 @@ const updateFilesSchema = Joi.object({
 class FilesController {
   async createFiles(req, res) {
     const { error } = createFilesSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { id_employees, name, file_parh } = req.body;
     try {
       const new_files = await pool.query(
@@ -47,6 +50,9 @@ class FilesController {
   }
   async getOneFiles(req, res) {
     const { error } = getOneFilesSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const id = req.params.id;
     try {
       const files = await pool.query("SELECT * FROM files WHERE id = $1"[id]);
@@ -61,6 +67,9 @@ class FilesController {
   }
   async updateFiles(req, res) {
     const { error } = updateFilesSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { id, id_employees, name, file_parh } = req.body;
     try {
       const files = await pool.query(

@@ -22,6 +22,9 @@ const updatePositionsSchema = Joi.object({
 class PositionController {
   async createPositions(req, res) {
     const { error } = createPositionsSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { name } = req.body;
     try {
       const new_position = await pool.query(
@@ -43,6 +46,9 @@ class PositionController {
   }
   async getOnePositions(req, res) {
     const { error } = getOnePositionsSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const id = req.params.id;
     try {
       const positions = await pool.query(
@@ -59,6 +65,9 @@ class PositionController {
   }
   async updatePositions(req, res) {
     const { error } = updatePositionsSchema.validate(req, body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     const { id, name } = req.body;
     try {
       const positions = await pool.query(
