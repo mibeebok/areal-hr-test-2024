@@ -195,10 +195,10 @@ module.exports = {
       id: { type: "serial", primaryKey: true },
       date_and_time_of_the_operation: {
         type: "string",
-        default: pgm.func("NOW()"),
+        notNull: true,
       },
       who_changed_it: { type: "integer", notNull: true },
-      the_object_of_operation: { type: "integer", notNull: true },
+      the_object_of_operation: { type: "varchar(100)", notNull: true },
       changed_fields: { type: "jsonb", notNull: true },
     });
 

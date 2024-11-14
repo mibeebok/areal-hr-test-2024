@@ -15,7 +15,7 @@ const createHistoryOfChangeSchema = Joi.object({
     .pattern(/^\d{4}-\d{2}-\d{2}$/) // Проверка формата YYYY-MM-DD
     .required(),
   who_changed_it: Joi.integer().required(),
-  the_object_of_operation: Joi.integer().required(),
+  the_object_of_operation: Joi.varchar(100).required(),
   changed_fields: Joi.object().optional().required(),
 });
 const getOneHistoryOfChangeSchema = Joi.object({
@@ -26,7 +26,7 @@ const updateHistoryOfChangeSchema = Joi.object({
     .pattern(/^\d{4}-\d{2}-\d{2}$/) // Проверка формата YYYY-MM-DD
     .required(),
   who_changed_it: Joi.integer().required(),
-  the_object_of_operation: Joi.integer().required(),
+  the_object_of_operation: Joi.varchar(100).required(),
   changed_fields: Joi.object().optional().required(),
   id: Joi.integer().required(),
 });
