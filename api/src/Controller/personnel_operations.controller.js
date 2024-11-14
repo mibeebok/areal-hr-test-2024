@@ -4,9 +4,34 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+//Validate Personnel operations
+const Joi = require("joi");
+
+const createPersonnelOperationsSchema = Joi.object({
+  id_employee: Joi.integer().required(),
+  id_department: Joi.integer().required(),
+  id_position: Joi.integer().required(),
+  setting_the_salary: Joi.integer().required(),
+  salary_change: Joi.integer().reqyured(),
+  dismissal_from_work: Joi.boolean().required(),
+});
+const getOnePersonnelOperationsSchema = Joi.object({
+  id: Joi.integer().required(),
+});
+const updatePersonnelOperationsSchema = Joi.object({
+  id_employee: Joi.integer().required(),
+  id_department: Joi.integer().required(),
+  id_position: Joi.integer().required(),
+  setting_the_salary: Joi.integer().required(),
+  salary_change: Joi.integer().reqyured(),
+  dismissal_from_work: Joi.boolean().required(),
+  id: Joi.integer().required(),
+});
+
 //Personnel operations
 class PersonnelOperationsController {
   async createPersonnelOperations(req, res) {
+    const { error } = createPersonnelOperationsSchema.validate(req.body);
     const {
       id_employee,
       id_department,
@@ -24,6 +49,7 @@ class PersonnelOperationsController {
           id_position,
           setting_the_salary,
           salary_change,
+          dismissal_from_work,
         ]
       );
       res.json(new_personnel_operations.rows[0]);
@@ -42,6 +68,7 @@ class PersonnelOperationsController {
     }
   }
   async getOnePersonnelOperations(req, res) {
+    const { error } = getOnePersonnelOperationsSchema.validate(req.body);
     const id = req.params.id;
     try {
       const personnel_operations = await pool.query(
@@ -57,6 +84,7 @@ class PersonnelOperationsController {
     }
   }
   async updatePersonnelOperations(req, res) {
+    const { error } = updatePersonnelOperationsSchema.validate(req.body);
     const { id, name, comment } = req.body;
     try {
       const personnel_operations = await pool.query(
@@ -107,11 +135,9 @@ class PersonnelOperationsController {
       );
 
       if (result.rows.length === 0) {
-        return res
-          .status(404)
-          .json({
-            message: "Неудалось уволить сотрудника, проверьте введённые данные",
-          });
+        return res.status(404).json({
+          message: "Неудалось уволить сотрудника, проверьте введённые данные",
+        });
       }
 
       res.status(200).json({

@@ -3,10 +3,34 @@ const { Pool } = require("pg");
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
+//Validate Employees
+const Joi = require("joi");
+
+const createEmployeesSchema = Joi.object({
+  first_name: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  name: Joi.varchar(100).alphanum().min(3).max(100).required(),
+  patronymic: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  date_of_birth: Joi.date().date().required(),
+  id_passport_data: Joi.integer().required(),
+  id_registration_address: Joi.integer().required(),
+});
+const getOneEmployeesSchema = Joi.object({
+  id: Joi.integer().required(),
+});
+const updateEmployeesSchema = Joi.object({
+  first_name: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  name: Joi.varchar(100).alphanum().min(3).max(100).required(),
+  patronymic: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  date_of_birth: Joi.date().date().required(),
+  id_passport_data: Joi.integer().required(),
+  id_registration_address: Joi.integer().required(),
+  id: Joi.integer().required(),
+});
 
 //Employees
 class EmployeesController {
   async createEmployees(req, res) {
+    const { error } = createEmployeesSchema.validate(req.body);
     const {
       first_name,
       name,
@@ -14,11 +38,10 @@ class EmployeesController {
       date_of_birth,
       id_passport_data,
       id_registration_address,
-      id_scan,
     } = req.body;
     try {
       const new_employees = await pool.query(
-        "INSERT INTO employees (first_name, name, patronymic, date_of_birth, id_passport_data, id_registration_address, id_scan) values ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        "INSERT INTO employees (first_name, name, patronymic, date_of_birth, id_passport_data, id_registration_address) values ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
         [
           first_name,
           name,
@@ -26,7 +49,6 @@ class EmployeesController {
           date_of_birth,
           id_passport_data,
           id_registration_address,
-          id_scan,
         ]
       );
       res.json(new_employees.rows[0]);
@@ -43,6 +65,7 @@ class EmployeesController {
     }
   }
   async getOneEmployees(req, res) {
+    const { error } = getOneEmployeesSchema.validate(req.body);
     const id = req.params.id;
     try {
       const employees = await pool.query(
@@ -58,10 +81,19 @@ class EmployeesController {
     }
   }
   async updateEmployees(req, res) {
-    const { id, name, comment } = req.body;
+    const { error } = updateEmployeesSchema.validate(req.body);
+    const {
+      first_name,
+      name,
+      patronymic,
+      date_of_birth,
+      id_passport_data,
+      id_registration_address,
+      id,
+    } = req.body;
     try {
       const employees = await pool.query(
-        "UPDATE employees set first_name = $1 name = $2 patronymic = $3 date_of_birth = $4 id_passport_data = $5 id_registration_address = $6 id_scan = $7 WHERE id = $8 RETURNING *",
+        "UPDATE employees set first_name = $1 name = $2 patronymic = $3 date_of_birth = $4 id_passport_data = $5 id_registration_address = $6 WHERE id = $7 RETURNING *",
         [
           first_name,
           name,
@@ -69,7 +101,6 @@ class EmployeesController {
           date_of_birth,
           id_passport_data,
           id_registration_address,
-          id_scan,
           id,
         ]
       );

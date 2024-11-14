@@ -114,7 +114,7 @@ module.exports = {
       id_employee: { type: "integer", notNull: true },
       id_department: { type: "integer", notNull: true },
       id_position: { type: "integer", notNull: true },
-      setting_the_salary: { type: "varchar(100)", notNull: true },
+      setting_the_salary: { type: "integer", notNull: true },
       salary_change: { type: "integer", notNull: false },
       dismissal_from_work: { type: "boolean", notNull: false },
     });
@@ -194,7 +194,7 @@ module.exports = {
     pgm.createTable("history_of_change", {
       id: { type: "serial", primaryKey: true },
       date_and_time_of_the_operation: {
-        type: "timestamp",
+        type: "string",
         default: pgm.func("NOW()"),
       },
       who_changed_it: { type: "integer", notNull: true },

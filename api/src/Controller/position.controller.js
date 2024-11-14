@@ -4,9 +4,24 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+//Validate Position
+const Joi = require("joi");
+
+const createPositionsSchema = Joi.object({
+  name: Joi.varchar(100).alphanum().min(3).max(100).required(),
+});
+const getOnePositionsSchema = Joi.object({
+  id: Joi.integer().required(),
+});
+const updatePositionsSchema = Joi.object({
+  name: Joi.vatchar(100).alphanum().min(3).max(100).reguired(),
+  id: Joi.integer().required(),
+});
+
 //Position
 class PositionController {
   async createPositions(req, res) {
+    const { error } = createPositionsSchema.validate(req.body);
     const { name } = req.body;
     try {
       const new_position = await pool.query(
@@ -27,6 +42,7 @@ class PositionController {
     }
   }
   async getOnePositions(req, res) {
+    const { error } = getOnePositionsSchema.validate(req.body);
     const id = req.params.id;
     try {
       const positions = await pool.query(
@@ -42,10 +58,11 @@ class PositionController {
     }
   }
   async updatePositions(req, res) {
-    const { id, name, comment } = req.body;
+    const { error } = updatePositionsSchema.validate(req, body);
+    const { id, name } = req.body;
     try {
       const positions = await pool.query(
-        "UPDATE positions set name = $1 WHERE id = $7 RETURNING *",
+        "UPDATE positions set name = $1 WHERE id = $2 RETURNING *",
         [name, id]
       );
       if (positions.rows.length > 0) {

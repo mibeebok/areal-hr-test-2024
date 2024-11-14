@@ -4,9 +4,37 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+//Validate History of change
+const Joi = require("joi");
+const {
+  generateColumnString,
+} = require("node-pg-migrate/dist/operations/indexes/shared");
+
+const createHistoryOfChangeSchema = Joi.object({
+  date_and_time_of_the_operation: Joi.string()
+    .pattern(/^\d{4}-\d{2}-\d{2}$/) // Проверка формата YYYY-MM-DD
+    .required(),
+  who_changed_it: Joi.integer().required(),
+  the_object_of_operation: Joi.integer().required(),
+  changed_fields: Joi.object().optional().required(),
+});
+const getOneHistoryOfChangeSchema = Joi.object({
+  id: Joi.integer().required(),
+});
+const updateHistoryOfChangeSchema = Joi.object({
+  date_and_time_of_the_operation: Joi.string()
+    .pattern(/^\d{4}-\d{2}-\d{2}$/) // Проверка формата YYYY-MM-DD
+    .required(),
+  who_changed_it: Joi.integer().required(),
+  the_object_of_operation: Joi.integer().required(),
+  changed_fields: Joi.object().optional().required(),
+  id: Joi.integer().required(),
+});
+
 //History of change
 class HistoryOfChangeController {
   async createHistoryOfChange(req, res) {
+    const { error } = createHistoryOfChangeSchema.validate(req.body);
     const {
       date_and_time_of_the_operation,
       who_changed_it,
@@ -39,6 +67,7 @@ class HistoryOfChangeController {
     }
   }
   async getOneHistoryOfChange(req, res) {
+    const { error } = getOneHistoryOfChangeSchema.validate(req.body);
     const id = req.params.id;
     try {
       const history_of_changes = await pool.query(
@@ -54,6 +83,7 @@ class HistoryOfChangeController {
     }
   }
   async updateHistoryOfChange(req, res) {
+    const { error } = updateHistoryOfChangeSchema.validate(req.body);
     const { id, name, comment } = req.body;
     try {
       const history_of_changes = await pool.query(

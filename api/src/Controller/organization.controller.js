@@ -3,9 +3,26 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+//Validate Organization
+const Joi = require("joi");
+
+const createOrganizationSchema = Joi.object({
+  name: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  comment: Joi.varchar(100).alphanum().min(5).max(100).required(),
+});
+const getOneOrganizationSchema = Joi.object({
+  id: Joi.integer().required(),
+});
+const updateOrganizationSchema = Joi.object({
+  name: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  comment: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  id: Joi.integer().required(),
+});
+
 //Organization
 class OrganizationController {
   async createOrganization(req, res) {
+    const { error } = createOrganizationSchema.validate(req.body);
     const { name, comment } = req.body;
     try {
       const organizations = await pool.query(
@@ -28,6 +45,7 @@ class OrganizationController {
     }
   }
   async getOneOrganization(req, res) {
+    const { error } = getOneOrganizationSchema.validate(req.body);
     const id = req.params.id;
     try {
       const organizations = await pool.query(
@@ -43,6 +61,7 @@ class OrganizationController {
     }
   }
   async updateOrganization(req, res) {
+    const { error } = updateOrganizationSchema.validate(req.body);
     const { id, name, comment } = req.body;
     try {
       const organizations = await pool.query(
