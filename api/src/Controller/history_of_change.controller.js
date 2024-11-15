@@ -33,6 +33,7 @@ const updateHistoryOfChangeSchema = Joi.object({
 
 //History of change
 class HistoryOfChangeController {
+  //CREATE
   async createHistoryOfChange(req, res) {
     const { error } = createHistoryOfChangeSchema.validate(req.body);
     if (error) {
@@ -55,20 +56,22 @@ class HistoryOfChangeController {
         ]
       );
       res.json(history_of_changes.rows[0]);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET
   async getHistoryOfChange(req, res) {
     try {
       const history_of_changes = await pool.query(
         "SELECT * FROM history_of_change"
       );
       res.json(history_of_changes.rows);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET ONE
   async getOneHistoryOfChange(req, res) {
     const { error } = getOneHistoryOfChangeSchema.validate(req.body);
     if (error) {
@@ -84,24 +87,33 @@ class HistoryOfChangeController {
       } else {
         res.status(404).json({ message: "История изменений не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //UPDATE
   async updateHistoryOfChange(req, res) {
     const { error } = updateHistoryOfChangeSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id, name, comment } = req.body;
+    const {
+      date_and_time_of_the_operation,
+      who_changed_it,
+      the_object_of_operation,
+      changed_fields,
+      dismissal_from_work,
+      id,
+    } = req.body;
     try {
       const history_of_changes = await pool.query(
-        "UPDATE history_of_change set date_and_time_of_the_operation = $1 who_changed_it = $2 the_object_of_operation = $3 changed_fields = $4 dismissal_from_work = $6 WHERE id = $5 RETURNING *",
+        "UPDATE history_of_change set date_and_time_of_the_operation = $1 who_changed_it = $2 the_object_of_operation = $3 changed_fields = $4 dismissal_from_work = $6 WHERE id = $7 RETURNING *",
         [
           date_and_time_of_the_operation,
           who_changed_it,
           the_object_of_operation,
           changed_fields,
+          dismissal_from_work,
           id,
         ]
       );
@@ -110,10 +122,11 @@ class HistoryOfChangeController {
       } else {
         res.status(404).json({ message: "История изменений не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //DELETE
   async deleteHistoryOfChange(req, res) {
     const id = req.params.id;
     try {
@@ -125,8 +138,8 @@ class HistoryOfChangeController {
       } else {
         res.status(404).json({ message: "История изменений не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }

@@ -8,14 +8,14 @@ const Joi = require("joi");
 
 const createOrganizationSchema = Joi.object({
   name: Joi.string().min(5).max(100).required(),
-  comment: Joi.string().min(5).max(100).allow(''),
+  comment: Joi.string().min(5).max(100).allow(""),
 });
 const getOneOrganizationSchema = Joi.object({
   id: Joi.number().integer().required(),
 });
 const updateOrganizationSchema = Joi.object({
   name: Joi.string().min(5).max(100).required(),
-  comment: Joi.string().min(5).max(100).allow(''),
+  comment: Joi.string().min(5).max(100).allow(""),
   id: Joi.number().integer().required(),
 });
 
@@ -47,6 +47,7 @@ FOR EACH ROW EXECUTE FUNCTION logingChangesOrganization();
 
 //Organization
 class OrganizationController {
+  //CREATE
   async createOrganization(req, res) {
     const { error } = createOrganizationSchema.validate(req.body);
     if (error) {
@@ -64,19 +65,19 @@ class OrganizationController {
 
       res.json(organizations.rows);
     } catch (err) {
-      console.error(err);
-
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET
   async getOrganization(req, res) {
     try {
       const organizations = await pool.query("SELECT * FROM organizations");
       res.json(organizations.rows);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET ONE
   async getOneOrganization(req, res) {
     const { error } = getOneOrganizationSchema.validate(req.body);
     if (error) {
@@ -92,10 +93,11 @@ class OrganizationController {
       } else {
         res.status(404).json({ message: "Организация не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //UPDATE
   async updateOrganization(req, res) {
     const { error } = updateOrganizationSchema.validate(req.body);
     if (error) {
@@ -112,10 +114,11 @@ class OrganizationController {
       } else {
         res.status(404).json({ message: "Организация не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //DELETE
   async deleteOrganization(req, res) {
     const id = req.params.id;
     try {
@@ -127,8 +130,8 @@ class OrganizationController {
       } else {
         res.status(404).json({ message: "Организация не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }

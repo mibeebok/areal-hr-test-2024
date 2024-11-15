@@ -11,7 +11,7 @@ const createDepartmentSchema = Joi.object({
   id_organization: Joi.number().integer().required(),
   parent: Joi.number().integer().required(),
   name: Joi.string().min(3).max(30).required(),
-  comment: Joi.string().min(5).max(1000).allow(''),
+  comment: Joi.string().min(5).max(1000).allow(""),
 });
 const getOneDepartmentsSchema = Joi.object({
   id: Joi.number().integer().required(),
@@ -20,7 +20,7 @@ const updateDepartmentSchema = Joi.object({
   id_organization: Joi.number().integer().required(),
   parent: Joi.number().integer().required(),
   name: Joi.string().min(3).max(30).required(),
-  comment: Joi.string().min(5).max(1000).allow(''),
+  comment: Joi.string().min(5).max(1000).allow(""),
   id: Joi.number().integer().required(),
 });
 
@@ -52,6 +52,7 @@ FOR EACH ROW EXECUTE FUNCTION logingChangesDepartment();
 
 //Department
 class DepartmentController {
+  //CREATE
   async createDepartments(req, res) {
     const { error } = createDepartmentSchema.validate(req.body);
     if (error) {
@@ -68,18 +69,20 @@ class DepartmentController {
       await pool.query(logingChangesDepartmentTrigger);
 
       res.json(departments.rows);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET
   async getDepartments(req, res) {
     try {
       const departments = await pool.query("SELECT * FROM departments");
       res.json(departments.rows);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET ONE
   async getOneDepartments(req, res) {
     const { error } = getOneDepartmentsSchema.validate(req.body);
     if (error) {
@@ -95,10 +98,11 @@ class DepartmentController {
       } else {
         res.status(404).json({ message: "Отдел не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //UPDATE
   async updateDepartments(req, res) {
     const { error } = updateDepartmentSchema.validate(req.body);
     if (error) {
@@ -115,10 +119,11 @@ class DepartmentController {
       } else {
         res.status(404).json({ message: "Отдел не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //DELETE
   async deleteDepartments(req, res) {
     const id = req.params.id;
     try {
@@ -130,8 +135,8 @@ class DepartmentController {
       } else {
         res.status(404).json({ message: "Отдел не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }
