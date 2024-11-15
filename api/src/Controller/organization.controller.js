@@ -7,15 +7,15 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createOrganizationSchema = Joi.object({
-  name: Joi.varchar(100).alphanum().min(5).max(100).required(),
-  comment: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  name: Joi.string().alphanum().min(5).max(100).required(),
+  comment: Joi.string().alphanum().min(5).max(100).required(),
 });
 const getOneOrganizationSchema = Joi.object({
   id: Joi.integer().required(),
 });
 const updateOrganizationSchema = Joi.object({
-  name: Joi.varchar(100).alphanum().min(5).max(100).required(),
-  comment: Joi.varchar(100).alphanum().min(5).max(100).required(),
+  name: Joi.string().alphanum().min(5).max(100).required(),
+  comment: Joi.string().alphanum().min(5).max(100).required(),
   id: Joi.integer().required(),
 });
 

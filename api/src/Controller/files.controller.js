@@ -9,16 +9,16 @@ const Joi = require("joi");
 
 const createFilesSchema = Joi.object({
   id_employees: Joi.integer().required(),
-  name: Joi.varchar(100).alphamun().min(3).max(100).required(),
-  files_path: Joi.varchar(100).alphanum().required(),
+  name: Joi.string().alphamun().min(3).max(100).required(),
+  files_path: Joi.string().alphanum().required(),
 });
 const getOneFilesSchema = Joi.object({
   id: Joi.integer().required(),
 });
 const updateFilesSchema = Joi.object({
   id_employees: Joi.integer().required(),
-  name: Joi.varchar(100).alphamun().min(3).max(100).required(),
-  files_path: Joi.varchar(100).alphanum().required(),
+  name: Joi.string().alphamun().min(3).max(100).required(),
+  files_path: Joi.string().alphanum().required(),
   id: Joi.integer().required(),
 });
 

@@ -8,13 +8,13 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createPositionsSchema = Joi.object({
-  name: Joi.varchar(100).alphanum().min(3).max(100).required(),
+  name: Joi.string().alphanum().min(3).max(100).required(),
 });
 const getOnePositionsSchema = Joi.object({
   id: Joi.integer().required(),
 });
 const updatePositionsSchema = Joi.object({
-  name: Joi.vatchar(100).alphanum().min(3).max(100).reguired(),
+  name: Joi.string().alphanum().min(3).max(100).reguired(),
   id: Joi.integer().required(),
 });
 
