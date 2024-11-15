@@ -8,18 +8,18 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createFilesSchema = Joi.object({
-  id_employees: Joi.integer().required(),
-  name: Joi.string().alphamun().min(3).max(100).required(),
-  files_path: Joi.string().alphanum().required(),
+  id_employees: Joi.number().integer().required(),
+  name: Joi.string().alphanum().min(3).max(100).required(),
+  files_path: Joi.string().required(),
 });
 const getOneFilesSchema = Joi.object({
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 const updateFilesSchema = Joi.object({
-  id_employees: Joi.integer().required(),
-  name: Joi.string().alphamun().min(3).max(100).required(),
-  files_path: Joi.string().alphanum().required(),
-  id: Joi.integer().required(),
+  id_employees: Joi.number().integer().required(),
+  name: Joi.string().alphanum().min(3).max(100).required(),
+  files_path: Joi.string().required(),
+  id: Joi.number().integer().required(),
 });
 
 //Files

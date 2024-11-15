@@ -8,14 +8,14 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createPositionsSchema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(100).required(),
+  name: Joi.string().min(5).max(100).required(),
 });
 const getOnePositionsSchema = Joi.object({
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 const updatePositionsSchema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(100).reguired(),
-  id: Joi.integer().required(),
+  name: Joi.string().min(5).max(100).required(),
+  id: Joi.number().integer().required(),
 });
 
 //Loging changes
@@ -23,9 +23,9 @@ const logingChangesPositions = `
 CREATE OR REPLACE FUNCTION logingChangesPositions()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
     VALUES (
-        Date & Time at moment of evaluation,
+        NOW(),
         'admin'
         'positions',
         jsonb_build_object(

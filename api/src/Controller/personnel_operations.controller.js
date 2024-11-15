@@ -8,24 +8,24 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createPersonnelOperationsSchema = Joi.object({
-  id_employee: Joi.integer().required(),
-  id_department: Joi.integer().required(),
-  id_position: Joi.integer().required(),
-  setting_the_salary: Joi.integer().required(),
-  salary_change: Joi.integer().reqyured(),
+  id_employee: Joi.number().integer().required(),
+  id_department: Joi.number().integer().required(),
+  id_position: Joi.number().integer().required(),
+  setting_the_salary: Joi.number().integer().allow(''),
+  salary_change: Joi.number().integer().allow(''),
   dismissal_from_work: Joi.boolean().required(),
 });
 const getOnePersonnelOperationsSchema = Joi.object({
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 const updatePersonnelOperationsSchema = Joi.object({
-  id_employee: Joi.integer().required(),
-  id_department: Joi.integer().required(),
-  id_position: Joi.integer().required(),
-  setting_the_salary: Joi.integer().required(),
-  salary_change: Joi.integer().reqyured(),
+  id_employee: Joi.number().integer().required(),
+  id_department: Joi.number().integer().required(),
+  id_position: Joi.number().integer().required(),
+  setting_the_salary: Joi.number().integer().allow(''),
+  salary_change: Joi.number().integer().allow(''),
   dismissal_from_work: Joi.boolean().required(),
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 
 //Loging changes
@@ -33,9 +33,9 @@ const logingChangesPersonnelOperation = `
 CREATE OR REPLACE FUNCTION logingChangesPersonnelOperation()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
     VALUES (
-        Date & Time at moment of evaluation,
+        NOW(),
         'admin'
         'personnel_operation',
         jsonb_build_object(

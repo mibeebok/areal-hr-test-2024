@@ -7,24 +7,24 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createEmployeesSchema = Joi.object({
-  first_name: Joi.varchar(100).alphanum().min(5).max(100).required(),
-  name: Joi.varchar(100).alphanum().min(3).max(100).required(),
-  patronymic: Joi.varchar(100).alphanum().min(5).max(100).required(),
-  date_of_birth: Joi.date().date().required(),
-  id_passport_data: Joi.integer().required(),
-  id_registration_address: Joi.integer().required(),
+  first_name: Joi.string().alphanum().min(5).max(100).required(),
+  name: Joi.string().alphanum().min(3).max(100).required(),
+  patronymic: Joi.string().alphanum().min(5).max(100).required(),
+  date_of_birth: Joi.date().required(),
+  id_passport_data: Joi.number().integer().required(),
+  id_registration_address: Joi.number().integer().required(),
 });
 const getOneEmployeesSchema = Joi.object({
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 const updateEmployeesSchema = Joi.object({
   first_name: Joi.string().alphanum().min(5).max(100).required(),
   name: Joi.string().alphanum().min(3).max(100).required(),
   patronymic: Joi.string().alphanum().min(5).max(100).required(),
-  date_of_birth: Joi.date().date().required(),
-  id_passport_data: Joi.integer().required(),
-  id_registration_address: Joi.integer().required(),
-  id: Joi.integer().required(),
+  date_of_birth: Joi.date().required(),
+  id_passport_data: Joi.number().integer().required(),
+  id_registration_address: Joi.number().integer().required(),
+  id: Joi.number().integer().required(),
 });
 
 //Loging changes
@@ -32,9 +32,9 @@ const logingChangesEmployees = `
 CREATE OR REPLACE FUNCTION logingChangesEmployees()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
     VALUES (
-        Date & Time at moment of evaluation,
+        NOW(),
         'admin'
         'Employees',
         jsonb_build_object(

@@ -8,20 +8,20 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createDepartmentSchema = Joi.object({
-  id_organization: Joi.integer().required(),
-  parent: Joi.integer().require(),
-  name: Joi.string().alphanum().min(3).max(30).required(),
-  comment: Joi.string().alphanum().min(5).max(1000).required(),
+  id_organization: Joi.number().integer().required(),
+  parent: Joi.number().integer().required(),
+  name: Joi.string().min(3).max(30).required(),
+  comment: Joi.string().min(5).max(1000).allow(''),
 });
 const getOneDepartmentsSchema = Joi.object({
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 const updateDepartmentSchema = Joi.object({
-  id_organization: Joi.integer().required(),
-  parent: Joi.integer().require(),
-  name: Joi.string().alphanum().min(3).max(30).required(),
-  comment: Joi.string().alphanum().min(5).max(1000).required(),
-  id: Joi.integer().required(),
+  id_organization: Joi.number().integer().required(),
+  parent: Joi.number().integer().required(),
+  name: Joi.string().min(3).max(30).required(),
+  comment: Joi.string().min(5).max(1000).allow(''),
+  id: Joi.number().integer().required(),
 });
 
 //Loging changes
@@ -29,9 +29,9 @@ const logingChangesDepartment = `
 CREATE OR REPLACE FUNCTION logingChangesDepartment()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
     VALUES (
-        Date & Time at moment of evaluation,
+        NOW(),
         'admin'
         'Department',
         jsonb_build_object(

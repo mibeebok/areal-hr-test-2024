@@ -7,16 +7,16 @@ const pool = new Pool({
 const Joi = require("joi");
 
 const createOrganizationSchema = Joi.object({
-  name: Joi.string().alphanum().min(5).max(100).required(),
-  comment: Joi.string().alphanum().min(5).max(100).required(),
+  name: Joi.string().min(5).max(100).required(),
+  comment: Joi.string().min(5).max(100).allow(''),
 });
 const getOneOrganizationSchema = Joi.object({
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 const updateOrganizationSchema = Joi.object({
-  name: Joi.string().alphanum().min(5).max(100).required(),
-  comment: Joi.string().alphanum().min(5).max(100).required(),
-  id: Joi.integer().required(),
+  name: Joi.string().min(5).max(100).required(),
+  comment: Joi.string().min(5).max(100).allow(''),
+  id: Joi.number().integer().required(),
 });
 
 //Loging changes
@@ -24,9 +24,9 @@ const logingChangesOrganization = `
 CREATE OR REPLACE FUNCTION logingChangesOrganization()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
     VALUES (
-        Date & Time at moment of evaluation,
+        NOW(),
         'admin'
         'Organization',
         jsonb_build_object(

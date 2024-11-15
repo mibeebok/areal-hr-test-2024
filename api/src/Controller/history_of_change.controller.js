@@ -14,21 +14,21 @@ const createHistoryOfChangeSchema = Joi.object({
   date_and_time_of_the_operation: Joi.string()
     .pattern(/^\d{4}-\d{2}-\d{2}$/) // Проверка формата YYYY-MM-DD
     .required(),
-  who_changed_it: Joi.integer().required(),
+  who_changed_it: Joi.number().integer().required(),
   the_object_of_operation: Joi.string().required(),
-  changed_fields: Joi.object().optional().required(),
+  changed_fields: Joi.object().optional(),
 });
 const getOneHistoryOfChangeSchema = Joi.object({
-  id: Joi.integer().required(),
+  id: Joi.number().integer().required(),
 });
 const updateHistoryOfChangeSchema = Joi.object({
   date_and_time_of_the_operation: Joi.string()
     .pattern(/^\d{4}-\d{2}-\d{2}$/) // Проверка формата YYYY-MM-DD
     .required(),
-  who_changed_it: Joi.integer().required(),
+  who_changed_it: Joi.number().integer().required(),
   the_object_of_operation: Joi.string().required(),
-  changed_fields: Joi.object().optional().required(),
-  id: Joi.integer().required(),
+  changed_fields: Joi.object().optional(),
+  id: Joi.number().integer().required(),
 });
 
 //History of change
