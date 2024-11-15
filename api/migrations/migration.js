@@ -210,13 +210,6 @@ module.exports = {
       },
     });
 
-    pgm.addConstraint("history_of_change", "fk4", {
-      foreignKeys: {
-        columns: "the_object_of_operation",
-        references: "personnel_operations (id)",
-        onDelete: "CASCADE",
-      },
-    });
   },
 
   //Delete
