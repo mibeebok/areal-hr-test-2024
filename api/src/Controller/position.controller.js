@@ -18,6 +18,31 @@ const updatePositionsSchema = Joi.object({
   id: Joi.integer().required(),
 });
 
+//Loging changes
+const logingChangesPositions = `
+CREATE OR REPLACE FUNCTION logingChangesPositions()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    VALUES (
+        Date & Time at moment of evaluation,
+        'admin'
+        'positions',
+        jsonb_build_object(
+            'old', row_to_json(OLD),
+            'new', row_to_json(NEW)
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+`;
+
+const logingChangesPositionsTrigger = `
+CREATE TRIGGER logingChangesPositionsTrigger
+AFTER INSERT OR UPDATE OR DELETE ON positions
+FOR EACH ROW EXECUTE FUNCTION logingChangesPositions();
+`;
 //Position
 class PositionController {
   async createPositions(req, res) {
@@ -31,6 +56,10 @@ class PositionController {
         "INSERT INTO positions (name) values ($1) RETURNING *",
         [name]
       );
+
+      await pool.query(logingChangesPositions);
+      await pool.query(logingChangesPositionsTrigger);
+
       res.json(new_position.rows[0]);
     } catch {
       res.status(500).json({ error: error.message });

@@ -24,6 +24,32 @@ const updateDepartmentSchema = Joi.object({
   id: Joi.integer().required(),
 });
 
+//Loging changes
+const logingChangesDepartment = `
+CREATE OR REPLACE FUNCTION logingChangesDepartment()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    VALUES (
+        Date & Time at moment of evaluation,
+        'admin'
+        'Department',
+        jsonb_build_object(
+            'old', row_to_json(OLD),
+            'new', row_to_json(NEW)
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+`;
+
+const logingChangesDepartmentTrigger = `
+CREATE TRIGGER logingChangesDepartmentTrigger
+AFTER INSERT OR UPDATE OR DELETE ON departments
+FOR EACH ROW EXECUTE FUNCTION logingChangesDepartment();
+`;
+
 //Department
 class DepartmentController {
   async createDepartments(req, res) {
@@ -37,6 +63,10 @@ class DepartmentController {
         "INSERT INTO departments (id_organization, parent, name, comment) values ($1, $2, $3, $4) RETURNING *",
         [id_organization, parent, name, comment]
       );
+
+      await pool.query(logingChangesDepartment);
+      await pool.query(logingChangesDepartmentTrigger);
+
       res.json(departments.rows);
     } catch {
       res.status(500).json({ error: error.message });

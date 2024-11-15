@@ -27,6 +27,32 @@ const updateEmployeesSchema = Joi.object({
   id: Joi.integer().required(),
 });
 
+//Loging changes
+const logingChangesEmployees = `
+CREATE OR REPLACE FUNCTION logingChangesEmployees()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    VALUES (
+        Date & Time at moment of evaluation,
+        'admin'
+        'Employees',
+        jsonb_build_object(
+            'old', row_to_json(OLD),
+            'new', row_to_json(NEW)
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+`;
+
+const logingChangesEmployeesTrigger = `
+CREATE TRIGGER logingChangesEmployeesTrigger
+AFTER INSERT OR UPDATE OR DELETE ON employees
+FOR EACH ROW EXECUTE FUNCTION logingChangesEmployees();
+`;
+
 //Employees
 class EmployeesController {
   async createEmployees(req, res) {
@@ -54,6 +80,10 @@ class EmployeesController {
           id_registration_address,
         ]
       );
+
+      await pool.query(logingChangesEmployees);
+      await pool.query(logingChangesEmployeesTrigger);
+
       res.json(new_employees.rows[0]);
     } catch {
       res.status(500).json({ error: error.message });

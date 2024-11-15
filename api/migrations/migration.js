@@ -32,7 +32,7 @@ module.exports = {
       patronymic: { type: "varchar(100)", notNull: true },
       date_of_birth: { type: "varchar(100)", notNull: true },
       id_passport_data: { type: "integer", notNull: true },
-      id_registration_address: { type: "integer", notNull: true },
+      id_registration_adress: { type: "integer", notNull: true },
     });
 
     pgm.addConstraint("employees", "fk5", {
@@ -45,7 +45,7 @@ module.exports = {
 
     pgm.addConstraint("employees", "fk6", {
       foreignKeys: {
-        columns: "id_passport_data",
+        columns: "id_registration_adress",
         references: "registration_adress(id)",
         onDelete: "CASCADE",
       },
@@ -114,7 +114,7 @@ module.exports = {
       id_employee: { type: "integer", notNull: true },
       id_department: { type: "integer", notNull: true },
       id_position: { type: "integer", notNull: true },
-      setting_the_salary: { type: "integer", notNull: true },
+      setting_the_salary: { type: "integer", notNull: false },
       salary_change: { type: "integer", notNull: false },
       dismissal_from_work: { type: "boolean", notNull: false },
     });

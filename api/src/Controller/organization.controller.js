@@ -19,6 +19,32 @@ const updateOrganizationSchema = Joi.object({
   id: Joi.integer().required(),
 });
 
+//Loging changes
+const logingChangesOrganization = `
+CREATE OR REPLACE FUNCTION logingChangesOrganization()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_field)
+    VALUES (
+        Date & Time at moment of evaluation,
+        'admin'
+        'Organization',
+        jsonb_build_object(
+            'old', row_to_json(OLD),
+            'new', row_to_json(NEW)
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+`;
+
+const logingChangesOrganizationTrigger = `
+CREATE TRIGGER logingChangesOrganizationTrigger
+AFTER INSERT OR UPDATE OR DELETE ON organizations
+FOR EACH ROW EXECUTE FUNCTION logingChangesOrganization();
+`;
+
 //Organization
 class OrganizationController {
   async createOrganization(req, res) {
@@ -32,6 +58,10 @@ class OrganizationController {
         "INSERT INTO organizations (name, comment) values ($1, $2) RETURNING *",
         [name, comment]
       );
+
+      await pool.query(logingChangesOrganization);
+      await pool.query(logingChangesOrganizationTrigger);
+
       res.json(organizations.rows);
     } catch (err) {
       console.error(err);
