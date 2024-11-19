@@ -24,6 +24,7 @@ const updateFilesSchema = Joi.object({
 
 //Files
 class FilesController {
+  //CREATE
   async createFiles(req, res) {
     const { error } = createFilesSchema.validate(req.body);
     if (error) {
@@ -36,18 +37,20 @@ class FilesController {
         [id_employees, name, file_parh]
       );
       res.json(new_files.rows[0]);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET
   async getFiles(req, res) {
     try {
       const files = await pool.query("SELECT * FROM files");
       res.json(files.rows);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET ONE
   async getOneFiles(req, res) {
     const { error } = getOneFilesSchema.validate(req.body);
     if (error) {
@@ -61,10 +64,11 @@ class FilesController {
       } else {
         res.status(404).json({ message: "Файл не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //UPDATE
   async updateFiles(req, res) {
     const { error } = updateFilesSchema.validate(req.body);
     if (error) {
@@ -81,10 +85,11 @@ class FilesController {
       } else {
         res.status(404).json({ message: "Файл не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //DELETE
   async deleteFiles(req, res) {
     const id = req.params.id;
     try {
@@ -94,8 +99,8 @@ class FilesController {
       } else {
         res.status(404).json({ message: "Файл не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }

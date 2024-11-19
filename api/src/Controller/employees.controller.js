@@ -55,6 +55,7 @@ FOR EACH ROW EXECUTE FUNCTION logingChangesEmployees();
 
 //Employees
 class EmployeesController {
+  //CREATE
   async createEmployees(req, res) {
     const { error } = createEmployeesSchema.validate(req.body);
     if (error) {
@@ -85,18 +86,20 @@ class EmployeesController {
       await pool.query(logingChangesEmployeesTrigger);
 
       res.json(new_employees.rows[0]);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET
   async getEmployees(req, res) {
     try {
       const employees = await pool.query("SELECT * FROM employees");
       res.json(employees.rows);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET ONE
   async getOneEmployees(req, res) {
     const { error } = getOneEmployeesSchema.validate(req.body);
     if (error) {
@@ -112,10 +115,11 @@ class EmployeesController {
       } else {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //UPDATE
   async updateEmployees(req, res) {
     const { error } = updateEmployeesSchema.validate(req.body);
     if (error) {
@@ -148,10 +152,11 @@ class EmployeesController {
       } else {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //DELETE
   async deleteEmployees(req, res) {
     const id = req.params.id;
     try {
@@ -163,8 +168,8 @@ class EmployeesController {
       } else {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }

@@ -11,8 +11,8 @@ const createPersonnelOperationsSchema = Joi.object({
   id_employee: Joi.number().integer().required(),
   id_department: Joi.number().integer().required(),
   id_position: Joi.number().integer().required(),
-  setting_the_salary: Joi.number().integer().allow(''),
-  salary_change: Joi.number().integer().allow(''),
+  setting_the_salary: Joi.number().integer().allow(""),
+  salary_change: Joi.number().integer().allow(""),
   dismissal_from_work: Joi.boolean().required(),
 });
 const getOnePersonnelOperationsSchema = Joi.object({
@@ -22,8 +22,8 @@ const updatePersonnelOperationsSchema = Joi.object({
   id_employee: Joi.number().integer().required(),
   id_department: Joi.number().integer().required(),
   id_position: Joi.number().integer().required(),
-  setting_the_salary: Joi.number().integer().allow(''),
-  salary_change: Joi.number().integer().allow(''),
+  setting_the_salary: Joi.number().integer().allow(""),
+  salary_change: Joi.number().integer().allow(""),
   dismissal_from_work: Joi.boolean().required(),
   id: Joi.number().integer().required(),
 });
@@ -56,6 +56,7 @@ FOR EACH ROW EXECUTE FUNCTION logingChangesPersonnelOperation();
 
 //Personnel operations
 class PersonnelOperationsController {
+  //CREATE
   async createPersonnelOperations(req, res) {
     const { error } = createPersonnelOperationsSchema.validate(req.body);
     if (error) {
@@ -86,20 +87,22 @@ class PersonnelOperationsController {
       await pool.query(logingChangesPersonnelOperationTrigger);
 
       res.json(new_personnel_operations.rows[0]);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET
   async getPersonnelOperations(req, res) {
     try {
       const personnel_operations = await pool.query(
         "SELECT * FROM personnel_operations WHERE dismissal_from_work = false"
       );
       res.json(personnel_operations.rows);
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //GET ONE
   async getOnePersonnelOperations(req, res) {
     const { error } = getOnePersonnelOperationsSchema.validate(req.body);
     if (error) {
@@ -115,16 +118,25 @@ class PersonnelOperationsController {
       } else {
         res.status(404).json({ message: "Опреация не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //UPDATE
   async updatePersonnelOperations(req, res) {
     const { error } = updatePersonnelOperationsSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id, name, comment } = req.body;
+    const {
+      id_employee,
+      id_department,
+      id_position,
+      setting_the_salary,
+      salary_change,
+      dismissal_from_work,
+      id,
+    } = req.body;
     try {
       const personnel_operations = await pool.query(
         "UPDATE personnel_operations set id_employee = $1 id_department = $2 id_position =$3 setting_the_salary = $4 salary_change = $5 dismissal_from_work = $6 WHERE id = $7 RETURNING *",
@@ -143,10 +155,11 @@ class PersonnelOperationsController {
       } else {
         res.status(404).json({ message: "Опреация не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //DELETE
   async deletePersonnelOperations(req, res) {
     const id = req.params.id;
     try {
@@ -158,10 +171,11 @@ class PersonnelOperationsController {
       } else {
         res.status(404).json({ message: "Опреация не найдена" });
       }
-    } catch {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
+  //DISMISSAL FROM WORK
   async softDeleteEmployees(req, res) {
     const { id } = req.params;
     try {
@@ -183,8 +197,8 @@ class PersonnelOperationsController {
         message: "Сотрудник уволен",
         operation: result.rows[0],
       });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }
