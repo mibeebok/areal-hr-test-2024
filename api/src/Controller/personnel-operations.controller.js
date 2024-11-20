@@ -32,11 +32,18 @@ const updatePersonnelOperationsSchema = Joi.object({
 const logingChangesPersonnelOperation = `
 CREATE OR REPLACE FUNCTION logingChangesPersonnelOperation()
 RETURNS TRIGGER AS $$
+DECLIARE
+roles_caption TEXT
 BEGIN
+
+    SELECT r.caption INTO roles_caption
+    FROM roles r
+    WHERE r.id = (SELECT id_roles FROM specialist)
+
     INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
     VALUES (
         NOW(),
-        'admin'
+        COALESCE (roles_caption, 'unknow'),
         'personnel_operation',
         jsonb_build_object(
             'old', row_to_json(OLD),

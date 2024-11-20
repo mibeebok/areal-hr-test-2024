@@ -1,6 +1,6 @@
 const Router = require("express");
 const router = new Router();
-const history_of_change_controller = require("../Controller/history_of_change.controller");
+const history_of_change_controller = require("../Controller/history-of-change.controller");
 
 router.get("/", (req, res) => {
   res.send("Welcome to the History of change API");

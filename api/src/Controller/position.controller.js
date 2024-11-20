@@ -22,11 +22,18 @@ const updatePositionsSchema = Joi.object({
 const logingChangesPositions = `
 CREATE OR REPLACE FUNCTION logingChangesPositions()
 RETURNS TRIGGER AS $$
+DECLARE
+  roles_caption TEXT;
 BEGIN
+
+    SELECT r.capton INTO roles_caption
+    FROM roles r
+    WHERE r.id = (SELECT id_roles FROM specialist)
+
     INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
     VALUES (
         NOW(),
-        'admin'
+        COALESCE(roles_caption, 'unknow'),
         'positions',
         jsonb_build_object(
             'old', row_to_json(OLD),
