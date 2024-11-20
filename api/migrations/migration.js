@@ -197,7 +197,7 @@ module.exports = {
     pgm.addConstraint("history_of_change", "fk3", {
       foreignKeys: {
         columns: "who_changed_it",
-        references: "spacialist(id)",
+        references: "specialist(id)",
         onDelete: "CASCADE",
       },
     });

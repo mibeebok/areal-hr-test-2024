@@ -6,14 +6,14 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir api/migrations up",
-    "migrate:rollback": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir api/migrations down",
+    "migrate": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir migrations up",
+    "migrate:rollback": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir migrations down",
     "migrate:create": "node-pg-migrate create <migration_name>"
   },
   "dependencies": {
     "express": "^4.21.1",
     "joi": "^17.13.3",
-    "node-pg-migrate": "7.7.1",
+    "node-pg-migrate": "^7.7.1",
     "pg": "^8.13.1",
     "vue": "^3.5.13"
   },
