@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir api/migrations up",
-    "migrate:rollback": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir api/migrations down",
+    "migrate": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir api/migrations/tables up",
+    "migrate:rollback": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir api/migrations/tables down",
     "migrate:create": "node-pg-migrate create <migration_name>"
   },
   "dependencies": {

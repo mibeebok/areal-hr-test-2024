@@ -153,19 +153,11 @@ module.exports = {
     //Roles
     pgm.createTable("roles", {
       id: { type: "serial", primaryKey: true },
-      id_employees: { type: "integer", notNull: true },
-      code: { type: "varchar (50)", notNull: true },
-    });
-    pgm.addConstraint("roles", "fk13", {
-      foreignKeys: {
-        columns: "id_employees",
-        references: "employees(id)",
-        onDelete: "CASCADE",
-      },
+      caption: { type: "varchar (100)", notNull: true },
     });
 
     //Specialist
-    pgm.createTable("spacialist", {
+    pgm.createTable("specialist", {
       id: { type: "serial", primaryKey: true },
       surname: { type: "varchar(100)", notNull: true },
       name: { type: "varchar(50)", notNull: true },
@@ -174,7 +166,7 @@ module.exports = {
       id_roles: { type: "integer", notNull: true },
     });
 
-    pgm.addConstraint("spacialist", "fk1", {
+    pgm.addConstraint("specialist", "fk1", {
       foreignKeys: {
         columns: "id_avtorization",
         references: "avtorizations(id)",
@@ -182,7 +174,7 @@ module.exports = {
       },
     });
 
-    pgm.addConstraint("spacialist", "fk2", {
+    pgm.addConstraint("specialist", "fk2", {
       foreignKeys: {
         columns: "id_roles",
         references: "roles(id)",
@@ -209,7 +201,6 @@ module.exports = {
         onDelete: "CASCADE",
       },
     });
-
   },
 
   //Delete
