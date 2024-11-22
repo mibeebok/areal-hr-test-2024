@@ -33,7 +33,7 @@ class FilesController {
     const { id_employees, name, file_parh } = req.body;
     try {
       const new_files = await pool.query(
-        "INSERT INTO files (id_employees, name, file_parh) values ($1, $2, $3) RETURNING *",
+        "INSERT INTO files (id_employees, name, file_parh, add_at) values ($1, $2, $3, NOW()) RETURNING *",
         [id_employees, name, file_parh]
       );
       res.json(new_files.rows[0]);
@@ -77,7 +77,7 @@ class FilesController {
     const { id, id_employees, name, file_parh } = req.body;
     try {
       const files = await pool.query(
-        "UPDATE files set id_employees = $1 name = $2 file_parh = $3 WHERE id = $4 RETURNING *",
+        "UPDATE files SET id_employees = $1, name = $2, file_parh = $3, update_at = NOW() WHERE id = $4 RETURNING *",
         [id_employees, name, file_parh, id]
       );
       if (files.rows.length > 0) {
@@ -93,7 +93,9 @@ class FilesController {
   async deleteFiles(req, res) {
     const id = req.params.id;
     try {
-      const files = await pool.query("DELETE FROM files WHERE id = $1"[id]);
+      const files = await pool.query(
+        "UPDATE FROM files SET delete_at = NOW() WHERE id = $1"[id]
+      );
       if (files.rows.length > 0) {
         res.json(files.rows);
       } else {

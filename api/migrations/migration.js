@@ -11,6 +11,9 @@ module.exports = {
       date_of_issue: { type: "date", notNull: true },
       unit_code: { type: "integer", notNull: true },
       issued_by_whom: { type: "varchar(100)", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     //Registration Adress
@@ -22,6 +25,9 @@ module.exports = {
       house: { type: "varchar(100)", notNull: true },
       building: { type: "integer", notNull: false },
       apartament: { type: "integer", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     //Employees
@@ -33,6 +39,9 @@ module.exports = {
       date_of_birth: { type: "varchar(100)", notNull: true },
       id_passport_data: { type: "integer", notNull: true },
       id_registration_adress: { type: "integer", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     pgm.addConstraint("employees", "fk5", {
@@ -57,6 +66,9 @@ module.exports = {
       id_employees: { type: "integer", notNull: true },
       name: { type: "varchar(100)", notNull: true },
       file_path: { type: "varchar(100)", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     pgm.addConstraint("files", "fk116", {
@@ -72,6 +84,9 @@ module.exports = {
       id: { type: "serial", primaryKey: true },
       name: { type: "varchar(100)", notNull: true },
       comment: { type: "varchar(1000)", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     //Department
@@ -81,6 +96,9 @@ module.exports = {
       parent: { type: "integer", notNull: true },
       name: { type: "varchar(100)", notNull: true },
       comment: { type: "varchar(1000)", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
     pgm.addConstraint("departments", "departments_unique_name", {
       unique: ["parent"],
@@ -106,6 +124,9 @@ module.exports = {
     pgm.createTable("positions", {
       id: { type: "serial", primaryKey: true },
       name: { type: "varchar(100)", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     //Personnel Operations
@@ -117,6 +138,9 @@ module.exports = {
       setting_the_salary: { type: "integer", notNull: false },
       salary_change: { type: "integer", notNull: false },
       dismissal_from_work: { type: "boolean", notNull: false },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     pgm.addConstraint("personnel_operations", "fk8", {
@@ -185,13 +209,13 @@ module.exports = {
     //History Of Change
     pgm.createTable("history_of_change", {
       id: { type: "serial", primaryKey: true },
-      date_and_time_of_the_operation: {
-        type: "string",
-        notNull: true,
-      },
+      date_and_time_of_the_operation: {type: "string", notNull: true},
       who_changed_it: { type: "integer", notNull: true },
       the_object_of_operation: { type: "varchar(100)", notNull: true },
       changed_fields: { type: "jsonb", notNull: true },
+      deleted_at:{type: "varchar(50)", notNull: false},
+      update_at: {type: "varchar(50)", notNull:false},
+      add_at: {type:"varchar(50)", notNull:false},
     });
 
     pgm.addConstraint("history_of_change", "fk3", {

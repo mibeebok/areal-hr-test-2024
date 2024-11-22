@@ -30,7 +30,7 @@ BEGIN
     FROM roles r
     WHERE r.id = (SELECT id_roles FROM specialist)
 
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
     VALUES (
         NOW(),
         COALESCE(roles_caption, 'unknow'),
@@ -38,7 +38,8 @@ BEGIN
         jsonb_build_object(
             'old', row_to_json(OLD),
             'new', row_to_json(NEW)
-        )
+        ),
+        NOW()
     );
     RETURN NEW;
 END;
@@ -58,10 +59,10 @@ class PositionController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { name } = req.body;
+    const { name, add_at } = req.body;
     try {
       const new_position = await pool.query(
-        "INSERT INTO positions (name) values ($1) RETURNING *",
+        "INSERT INTO positions (name, add_at) values ($1, NOW()) RETURNING *",
         [name]
       );
 
@@ -111,7 +112,7 @@ class PositionController {
     const { id, name } = req.body;
     try {
       const positions = await pool.query(
-        "UPDATE positions set name = $1 WHERE id = $2 RETURNING *",
+        "UPDATE positions SET name = $1, update_at = NOW() WHERE id = $2 RETURNING *",
         [name, id]
       );
       if (positions.rows.length > 0) {
@@ -128,7 +129,7 @@ class PositionController {
     const id = req.params.id;
     try {
       const positions = await pool.query(
-        "DELETE FROM positions WHERE id = $1"[id]
+        "UPDATE FROM positions SET delete_at = NOW() WHERE id = $1"[id]
       );
       if (positions.rows.length > 0) {
         res.json(positions.rows);

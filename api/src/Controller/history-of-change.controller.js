@@ -34,7 +34,7 @@ const updateHistoryOfChangeSchema = Joi.object({
 //History of change
 class HistoryOfChangeController {
   //CREATE
-  async createHistoryOfChange(req, res) {
+  /*async createHistoryOfChange(req, res) {
     const { error } = createHistoryOfChangeSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
@@ -47,7 +47,7 @@ class HistoryOfChangeController {
     } = req.body;
     try {
       const history_of_changes = await pool.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields) values ($1, $2, $3, $4) RETURNING *",
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at) values ($1, $2, $3, $4, NOW()) RETURNING *",
         [
           date_and_time_of_the_operation,
           who_changed_it,
@@ -59,7 +59,7 @@ class HistoryOfChangeController {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
+  }*/
   //GET
   async getHistoryOfChange(req, res) {
     try {
@@ -92,7 +92,7 @@ class HistoryOfChangeController {
     }
   }
   //UPDATE
-  async updateHistoryOfChange(req, res) {
+  /*async updateHistoryOfChange(req, res) {
     const { error } = updateHistoryOfChangeSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
@@ -103,17 +103,19 @@ class HistoryOfChangeController {
       the_object_of_operation,
       changed_fields,
       dismissal_from_work,
+      update_at,
       id,
     } = req.body;
     try {
       const history_of_changes = await pool.query(
-        "UPDATE history_of_change set date_and_time_of_the_operation = $1 who_changed_it = $2 the_object_of_operation = $3 changed_fields = $4 dismissal_from_work = $6 WHERE id = $7 RETURNING *",
+        "UPDATE history_of_change set date_and_time_of_the_operation = $1 who_changed_it = $2 the_object_of_operation = $3 changed_fields = $4 dismissal_from_work = $6, update_at = NOW() WHERE id = $7 RETURNING *",
         [
           date_and_time_of_the_operation,
           who_changed_it,
           the_object_of_operation,
           changed_fields,
           dismissal_from_work,
+          update_at,
           id,
         ]
       );
@@ -125,13 +127,13 @@ class HistoryOfChangeController {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
+  }*/
   //DELETE
-  async deleteHistoryOfChange(req, res) {
+  /*async deleteHistoryOfChange(req, res) {
     const id = req.params.id;
     try {
       const history_of_changes = await pool.query(
-        "DELETE FROM history_of_change WHERE id = $1"[id]
+        "UPDATE FROM history_of_change SET delete_at = NOW() WHERE id = $1"[id]
       );
       if (history_of_changes.rows.length > 0) {
         res.json(history_of_changes.rows);
@@ -141,7 +143,7 @@ class HistoryOfChangeController {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
+  }*/
 }
 
 module.exports = new HistoryOfChangeController();
