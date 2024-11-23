@@ -1,8 +1,5 @@
-const { Pool } = require("pg");
+const pool = require('../db/db.client')
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
 
 //Validate History of change
 const Joi = require("joi");

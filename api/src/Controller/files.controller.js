@@ -1,8 +1,4 @@
-const { Pool } = require("pg");
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = require('../db/db.client')
 
 //Validate Files
 const Joi = require("joi");

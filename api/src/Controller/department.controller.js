@@ -1,9 +1,4 @@
-//const pool = require('../db/db.client')
-const { Pool } = require("pg");
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = require('../db/db.client')
 
 //Validate Department
 const Joi = require("joi");
