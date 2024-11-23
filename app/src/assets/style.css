@@ -1,0 +1,166 @@
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #faf3e0;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  
+  .container1 {
+    width: 80%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #1c3120;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .container2 {
+    width: 80%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: transparent;
+    border: 3px solid #1c3120;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1,
+  h2,
+  h3 {
+    color: #ecf0f1;
+    text-align: center;
+  }
+  
+  .title2 {
+    color: #333;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateY(-50%);
+    top: 50%;
+    left: 0.5%;
+    width: 179px;
+    background-color: transparent;
+    border: 3px solid #1c3120;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: fit-content;
+  }
+  
+  .sidebar h2 {
+    color: #1c3120;
+    text-align: center;
+  }
+  
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    margin: 10px 0;
+  }
+  
+  .sidebar a {
+    color: #1c3120;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .sidebar a:hover {
+    color: #749b84;
+  }
+  
+  button {
+    background-color: #d7b48d;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: light;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-wrap: wrap; /* Позволяет кнопкам переноситься на следующую строку */
+    justify-content: space-between; /* Равномерное распределение кнопок */
+    align-items: center;
+    padding: 0 20px;
+  }
+  
+  .button {
+    margin: 5px; /* Расстояние между кнопками */
+    padding: 10px; /* Внутренний отступ для кнопок */
+  }
+  
+  button:hover {
+    background-color: #775c3e;
+    color: #ecf0f1;
+  }
+  
+  p {
+    line-height: 1.6;
+  }
+  
+  .parent-container {
+    display: grid; /* Включаем сетку */
+    justify-items: center; /* Центруем элементы внутри сетки */
+    margin-top: 20px;
+  }
+  table {
+    width: 80%;
+    border-collapse: collapse;
+  }
+  
+  table,
+  th,
+  td {
+    border: 1px solid #749b84;
+  }
+  
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #1c3120;
+    color: #ecf0f1;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #d7b48d;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  input[type="submit"] {
+    background-color: #d7b48d;
+    color: #ecf0f1;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #775c3e;
+  }
+  

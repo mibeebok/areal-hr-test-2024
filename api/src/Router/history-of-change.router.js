@@ -7,10 +7,10 @@ router.get("/", (req, res) => {
 });
 
 //History of change
-router.post(
+/*router.post(
   "/history_of_change",
   history_of_change_controller.createHistoryOfChange
-);
+);*/
 router.get(
   "/history_of_change",
   history_of_change_controller.getHistoryOfChange
@@ -19,13 +19,13 @@ router.get(
   "/history_of_change/:id",
   history_of_change_controller.getOneHistoryOfChange
 );
-router.put(
+/*router.put(
   "/history_of_change",
   history_of_change_controller.updateHistoryOfChange
 );
 router.delete(
   "/history_of_change/:id",
   history_of_change_controller.deleteHistoryOfChange
-);
+);*/
 
 module.exports = router;

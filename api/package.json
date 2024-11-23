@@ -4,13 +4,14 @@
   "description": "веб-приложение, в котором специалист по кадрам ведет учет сотрудников в нескольких организациях.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/index.js",
     "dev": "nodemon index.js",
     "migrate": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir migrations up",
     "migrate:rollback": "DATABASE_URL=\"postgres://postgres:Qw110307@localhost:5432/mydb\" node-pg-migrate --migrations-dir migrations down",
     "migrate:create": "node-pg-migrate create <migration_name>"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "joi": "^17.13.3",
     "node-pg-migrate": "^7.7.1",

@@ -1,3 +1,4 @@
+//const pool = require('../db/db.client')
 const { Pool } = require("pg");
 
 const pool = new Pool({
