@@ -59,7 +59,7 @@ class PositionController {
     try {
       const new_position = await pool.query(
         "INSERT INTO positions (name, add_at) values ($1, NOW()) RETURNING *",
-        [name]
+        [name, add_at]
       );
 
       await pool.query(logingChangesPositions);

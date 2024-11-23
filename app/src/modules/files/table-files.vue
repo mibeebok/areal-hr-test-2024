@@ -1,24 +1,22 @@
 <template>
   <div class="container2">
-    <p class="title2">Отделы</p>
+    <p class="title2">Файлы</p>
     <div class="parent-container">
       <table>
         <thead>
           <tr>
             <th>Номер записи</th>
-            <th>Организация</th>
-            <th>Родительский отдел</th>
+            <th>Код сотрудника</th>
             <th>Название</th>
-            <th>Комментарий</th>
+            <th>Путь</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in items" :key="item.id">
             <td>{{ item.id }}</td>
-            <td>{{ item.id_organization }}</td>
-            <td>{{ item.parent }}</td>
+            <td>{{ item.id_employees }}</td>
             <td>{{ item.name }}</td>
-            <td>{{ item.comment }}</td>
+            <td>{{ item.file_path }}</td>
           </tr>
         </tbody>
       </table>
@@ -42,7 +40,7 @@
 <script>
 import axios from "axios";
 export default {
-  name: "TableDepartment",
+  name: "TableFiles",
   data() {
     return {
       items: [],
@@ -54,7 +52,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/Dep`);
+        const response = await axios.get(`http://localhost:8081/Fil`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);

@@ -21,7 +21,7 @@ body {
     max-width: 1200px;
     margin: 20px auto;
     padding: 20px;
-    background-color: transparent;
+    background-color: #faf3e0;
     border: 3px solid #1c3120;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -101,7 +101,7 @@ body {
   
   .button {
     margin: 5px; /* Расстояние между кнопками */
-    padding: 10px; /* Внутренний отступ для кнопок */
+    padding: 2px 0; /* Внутренний отступ для кнопок */
   }
   
   button:hover {
