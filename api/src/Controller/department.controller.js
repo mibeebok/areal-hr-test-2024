@@ -3,6 +3,7 @@ const pool = require('../db/db.client')
 //Validate Department
 const Joi = require("joi");
 
+//Todo схемы для валидации лучше вынести в отдельные файлы для каждой сущности. (сделать для всех контроллеров) Посмотри пример как в структуре
 const createDepartmentSchema = Joi.object({
   id_organization: Joi.number().integer().required(),
   parent: Joi.number().integer().required(),
@@ -20,6 +21,8 @@ const updateDepartmentSchema = Joi.object({
   id: Joi.number().integer().required(),
 });
 
+
+//Todo Триггеры и функции создаются через миграции, а не в коде
 //Loging changes
 const logingChangesDepartment = `
 CREATE OR REPLACE FUNCTION logingChangesDepartment()
@@ -80,6 +83,7 @@ class DepartmentController {
   //GET
   async getDepartments(req, res) {
     try {
+      //Todo нет проверки на удаленную запись, их не надо выводить на фронт (сделать для всех контроллеров)
       const departments = await pool.query("SELECT * FROM departments");
       res.json(departments.rows);
     } catch (err) {

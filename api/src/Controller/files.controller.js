@@ -18,6 +18,7 @@ const updateFilesSchema = Joi.object({
   id: Joi.number().integer().required(),
 });
 
+//Todo файлы долны заполняться вместе с сущностью сотрудники и выводиться только в них. Отдельного котроллера не должно быть
 //Files
 class FilesController {
   //CREATE

@@ -5,8 +5,8 @@ const path = require('path');
 
 dotenv.config({ path: path.resolve(__dirname, '../../../docs/src/.env') });
 
-
-const pool = new Pool({ 
+//Todo Переменные не описаны .env.example
+const pool = new Pool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
