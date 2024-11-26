@@ -1,6 +1,6 @@
 const Router = require("express");
 const router = new Router();
-const personnel_operations_controller = require("../Controller/personnel_operations.controller");
+const personnel_operations_controller = require("../Controller/personnel-operations.controller");
 
 router.get("/", (req, res) => {
   res.send("Welcome to the Personnel operations API");

@@ -1,7 +1,4 @@
-const { Pool } = require("pg");
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = require('../db/db.client')
 
 //Validate Organization
 const Joi = require("joi");
@@ -23,16 +20,24 @@ const updateOrganizationSchema = Joi.object({
 const logingChangesOrganization = `
 CREATE OR REPLACE FUNCTION logingChangesOrganization()
 RETURNS TRIGGER AS $$
+DECLARE
+  roles_caption TEXT;
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
+
+    SELECT r.capton INTO roles_caption
+    FROM roles r
+    WHERE r.id = (SELECT id_roles FROM specialist)
+
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
     VALUES (
         NOW(),
-        'admin'
+        COALESCE(roles_caption, 'unknow'),
         'Organization',
         jsonb_build_object(
             'old', row_to_json(OLD),
             'new', row_to_json(NEW)
-        )
+        ),
+        NOW()
     );
     RETURN NEW;
 END;
@@ -56,7 +61,7 @@ class OrganizationController {
     const { name, comment } = req.body;
     try {
       const organizations = await pool.query(
-        "INSERT INTO organizations (name, comment) values ($1, $2) RETURNING *",
+        "INSERT INTO organizations (name, comment, add_at) values ($1, $2. NOW()) RETURNING *",
         [name, comment]
       );
 
@@ -103,11 +108,11 @@ class OrganizationController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id, name, comment } = req.body;
+    const { id, name, comment, update_at } = req.body;
     try {
       const organizations = await pool.query(
-        "UPDATE organizations set name = $1 comment = $2 WHERE id = $3 RETURNING *",
-        [name, comment, id]
+        "UPDATE organizations SET name = $1, comment = $2, update_at = NOW() WHERE id = $3 RETURNING *",
+        [name, comment, update_at, id]
       );
       if (organizations.rows.length > 0) {
         res.json(organizations.rows[0]);
@@ -123,7 +128,7 @@ class OrganizationController {
     const id = req.params.id;
     try {
       const organizations = await pool.query(
-        "DELETE FROM organizations WHERE id = $1"[id]
+        "UPDATE FROM organizations SET delete_at = NOW() WHERE id = $1"[id]
       );
       if (organizations.rows.length > 0) {
         res.json(organizations.rows[0]);

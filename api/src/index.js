@@ -4,8 +4,8 @@ const department_router = require("./Router/department.router");
 const position_router = require("./Router/position.router");
 const employees_router = require("./Router/employees.router");
 const files_router = require("./Router/files.router");
-const personnel_operations_router = require("./Router/personnel_operations.router");
-const history_of_change_router = require("./Router/history_of_change.router");
+const personnel_operations_router = require("./Router/personnel-operations.router");
+const history_of_change_router = require("./Router/history-of-change.router");
 
 const PORT = process.env.PORT || 8081;
 

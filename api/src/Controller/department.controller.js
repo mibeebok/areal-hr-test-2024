@@ -1,8 +1,4 @@
-const { Pool } = require("pg");
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = require('../db/db.client')
 
 //Validate Department
 const Joi = require("joi");
@@ -28,16 +24,24 @@ const updateDepartmentSchema = Joi.object({
 const logingChangesDepartment = `
 CREATE OR REPLACE FUNCTION logingChangesDepartment()
 RETURNS TRIGGER AS $$
+DECLARE
+  roles_caption TEXT;
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
+
+    SELECT r.capton INTO roles_caption
+    FROM roles r
+    WHERE r.id = (SELECT id_roles FROM specialist)
+
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
     VALUES (
         NOW(),
-        'admin'
+        COALESCE(roles_caption, 'unknow'),
         'Department',
         jsonb_build_object(
             'old', row_to_json(OLD),
             'new', row_to_json(NEW)
-        )
+        ),
+        NOW()
     );
     RETURN NEW;
 END;
@@ -61,7 +65,7 @@ class DepartmentController {
     const { id_organization, parent, name, comment } = req.body;
     try {
       const departments = await pool.query(
-        "INSERT INTO departments (id_organization, parent, name, comment) values ($1, $2, $3, $4) RETURNING *",
+        "INSERT INTO departments (id_organization, parent, name, comment, add_at) values ($1, $2, $3, $4, NOW()) RETURNING *",
         [id_organization, parent, name, comment]
       );
 
@@ -111,7 +115,7 @@ class DepartmentController {
     const { id_organization, name, parent, comment, id } = req.body;
     try {
       const departments = await pool.query(
-        "UPDATE departments set id_organization = $1 parent = $2 name = $3 comment = $4 WHERE id = $5 RETURNING *",
+        "UPDATE departments SET id_organization = $1, parent = $2, name = $3, comment = $4, update_at = NOW() WHERE id = $5 RETURNING *",
         [id_organization, parent, name, comment, id]
       );
       if (departments.rows.length > 0) {
@@ -128,7 +132,7 @@ class DepartmentController {
     const id = req.params.id;
     try {
       const departments = await pool.query(
-        "DELETE FROM departments WHERE id = $1"[id]
+        "UPDATE FROM departments SET delete_at = NOW() WHERE id = $1"[id]
       );
       if (departments.rows.length > 0) {
         res.json(departments.rows[0]);

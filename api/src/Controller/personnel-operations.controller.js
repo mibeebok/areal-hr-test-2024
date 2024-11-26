@@ -1,8 +1,4 @@
-const { Pool } = require("pg");
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = require('../db/db.client')
 
 //Validate Personnel operations
 const Joi = require("joi");
@@ -32,16 +28,24 @@ const updatePersonnelOperationsSchema = Joi.object({
 const logingChangesPersonnelOperation = `
 CREATE OR REPLACE FUNCTION logingChangesPersonnelOperation()
 RETURNS TRIGGER AS $$
+DECLIARE
+roles_caption TEXT
 BEGIN
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields)
+
+    SELECT r.caption INTO roles_caption
+    FROM roles r
+    WHERE r.id = (SELECT id_roles FROM specialist)
+
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
     VALUES (
         NOW(),
-        'admin'
+        COALESCE (roles_caption, 'unknow'),
         'personnel_operation',
         jsonb_build_object(
             'old', row_to_json(OLD),
             'new', row_to_json(NEW)
-        )
+        ),
+        NOW()
     );
     RETURN NEW;
 END;
@@ -72,7 +76,7 @@ class PersonnelOperationsController {
     } = req.body;
     try {
       const new_personnel_operations = await pool.query(
-        "INSERT INTO personnel_operations (id_employee, id_department, id_position, setting_the_salary, salary_change, dismissal_from_work) values ($1, $2, $3, $4, $5, false) RETURNING *",
+        "INSERT INTO personnel_operations (id_employee, id_department, id_position, setting_the_salary, salary_change, dismissal_from_work, add_at) values ($1, $2, $3, $4, $5, false, NOW()) RETURNING *",
         [
           id_employee,
           id_department,
@@ -135,11 +139,12 @@ class PersonnelOperationsController {
       setting_the_salary,
       salary_change,
       dismissal_from_work,
+      update_at,
       id,
     } = req.body;
     try {
       const personnel_operations = await pool.query(
-        "UPDATE personnel_operations set id_employee = $1 id_department = $2 id_position =$3 setting_the_salary = $4 salary_change = $5 dismissal_from_work = $6 WHERE id = $7 RETURNING *",
+        "UPDATE personnel_operations SET id_employee = $1, id_department = $2, id_position =$3, setting_the_salary = $4, salary_change = $5, dismissal_from_work = $6, update_at = NOW() WHERE id = $7 RETURNING *",
         [
           id_employee,
           id_department,
@@ -147,6 +152,7 @@ class PersonnelOperationsController {
           setting_the_salary,
           salary_change,
           dismissal_from_work,
+          update_at,
           id,
         ]
       );
@@ -164,7 +170,9 @@ class PersonnelOperationsController {
     const id = req.params.id;
     try {
       const personnel_operations = await pool.query(
-        "DELETE FROM personnel_operations WHERE id = $1"[id]
+        "UPDATE FROM personnel_operations SET delete_at = NOW() WHERE id = $1"[
+          id
+        ]
       );
       if (personnel_operations.rows.length > 0) {
         res.json(personnel_operations.rows);
