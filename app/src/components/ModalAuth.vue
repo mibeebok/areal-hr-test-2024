@@ -23,22 +23,15 @@
       };
     },
     methods: {
-    async handleLogin() {
-      try {
-        const response = await axios.post('http://localhost:8081/Avt/login', {
-          login: this.login,
-          password: this.password
-        });
-        console.log(response.data.message);
-      } catch (error) {
-        if (error.response) {
-          this.errorMessage = error.response.data.message;
+      login() {
+        // Пример авторизации, чтобы была возможность проверки сайта (потом изменю на данные с бд)
+        if (this.username === 'user' && this.password === 'password') {
+          this.$emit('authenticated'); 
         } else {
-          this.errorMessage = 'Ошибка сети. Попробуйте позже.';
+          this.errorMessage = 'Неверный логин или пароль';
         }
       }
     }
-  }
   };
   </script>
   
