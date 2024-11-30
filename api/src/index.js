@@ -6,6 +6,7 @@ const employees_router = require("./Router/employees.router");
 const files_router = require("./Router/files.router");
 const personnel_operations_router = require("./Router/personnel-operations.router");
 const history_of_change_router = require("./Router/history-of-change.router");
+const avtorization_router = require("./Router/avtorization.router");
 
 const PORT = process.env.PORT || 8081;
 
@@ -24,6 +25,7 @@ app.use("/Empl", employees_router);
 app.use("/Fil", files_router);
 app.use("/PerOP", personnel_operations_router);
 app.use("/His", history_of_change_router);
+app.use("/Avt", avtorization_router);
 
 app.listen(PORT, "0.0.0.0", () =>
   console.log(`server started on post ${PORT}`)

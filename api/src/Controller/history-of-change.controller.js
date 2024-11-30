@@ -44,7 +44,7 @@ class HistoryOfChangeController {
     } = req.body;
     try {
       const history_of_changes = await pool.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at) values ($1, $2, $3, $4, NOW()) RETURNING *",
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) values ($1, $2, $3, $4, NOW()) RETURNING *",
         [
           date_and_time_of_the_operation,
           who_changed_it,

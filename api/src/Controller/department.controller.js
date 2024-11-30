@@ -1,4 +1,4 @@
-const pool = require('../db/db.client')
+const pool = require("../db/db.client");
 
 //Validate Department
 const Joi = require("joi");
@@ -21,6 +21,7 @@ const updateDepartmentSchema = Joi.object({
 });
 
 //Loging changes
+/*
 const logingChangesDepartment = `
 CREATE OR REPLACE FUNCTION logingChangesDepartment()
 RETURNS TRIGGER AS $$
@@ -32,7 +33,7 @@ BEGIN
     FROM roles r
     WHERE r.id = (SELECT id_roles FROM specialist)
 
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at)
     VALUES (
         NOW(),
         COALESCE(roles_caption, 'unknow'),
@@ -53,6 +54,7 @@ CREATE TRIGGER logingChangesDepartmentTrigger
 AFTER INSERT OR UPDATE OR DELETE ON departments
 FOR EACH ROW EXECUTE FUNCTION logingChangesDepartment();
 `;
+*/
 
 //Department
 class DepartmentController {
@@ -62,15 +64,22 @@ class DepartmentController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id_organization, parent, name, comment } = req.body;
+    const { id_organization, parent, name, comment, create_add } = req.body;
     try {
       const departments = await pool.query(
-        "INSERT INTO departments (id_organization, parent, name, comment, add_at) values ($1, $2, $3, $4, NOW()) RETURNING *",
-        [id_organization, parent, name, comment]
+        "INSERT INTO departments (id_organization, parent, name, comment, create_at) values ($1, $2, $3, $4, NOW()) RETURNING *",
+        [id_organization, parent, name, comment, create_add]
+      );
+      const departmentHistory = await pool.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.id, "Отдел", JSON.stringify(result.rows[0]))
+        ]
       );
 
+      /*
       await pool.query(logingChangesDepartment);
       await pool.query(logingChangesDepartmentTrigger);
+      */
 
       res.json(departments.rows);
     } catch (err) {
@@ -112,11 +121,11 @@ class DepartmentController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id_organization, name, parent, comment, id } = req.body;
+    const { id_organization, name, parent, comment, update_at, id } = req.body;
     try {
       const departments = await pool.query(
         "UPDATE departments SET id_organization = $1, parent = $2, name = $3, comment = $4, update_at = NOW() WHERE id = $5 RETURNING *",
-        [id_organization, parent, name, comment, id]
+        [id_organization, parent, name, comment, update_at, id]
       );
       if (departments.rows.length > 0) {
         res.json(departments.rows[0]);

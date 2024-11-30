@@ -27,6 +27,7 @@
         </tbody>
       </table>
     </div>
+
     <div class="container2">
       <p class="title2">Паспортные данные</p>
       <div class="parent-container">
@@ -42,18 +43,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <td>{{ item.id }}</td>
-              <td>{{ item.series }}</td>
-              <td>{{ item.number }}</td>
-              <td>{{ item.date_of_issue }}</td>
-              <td>{{ item.unit_code }}</td>
-              <td>{{ item.issued_by_whom }}</td>
+            <tr v-for="passportItem in passportItems" :key="passportItem.id">
+              <td>{{ passportItem.id }}</td>
+              <td>{{ passportItem.series }}</td>
+              <td>{{ passportItem.number }}</td>
+              <td>{{ passportItem.date_of_issue }}</td>
+              <td>{{ passportItem.unit_code }}</td>
+              <td>{{ passportItem.issued_by_whom }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+
     <div class="container2">
       <p class="title2">Адрес регистрации</p>
       <div class="parent-container">
@@ -70,19 +72,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <td>{{ item.id }}</td>
-              <td>{{ item.region }}</td>
-              <td>{{ item.locality }}</td>
-              <td>{{ item.street }}</td>
-              <td>{{ item.house }}</td>
-              <td>{{ item.building }}</td>
-              <td>{{ item.apartment }}</td>
+            <tr v-for="adressItem in adressItems" :key="adressItem.id">
+              <td>{{ adressItem.id }}</td>
+              <td>{{ adressItem.region }}</td>
+              <td>{{ adressItem.locality }}</td>
+              <td>{{ adressItem.street }}</td>
+              <td>{{ adressItem.house }}</td>
+              <td>{{ adressItem.building }}</td>
+              <td>{{ adressItem.apartment }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+
     <div class="button-container">
     <div class="button">
       <button>Добавить запись</button>
@@ -106,6 +109,8 @@ export default {
   data() {
     return {
       items: [],
+      passportItems: [],
+      adressItems: [],
     };
   },
   mounted() {
@@ -114,8 +119,10 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/Empl`);
-        this.items = response.data;
+        const response = await axios.get("http://localhost:8081/Empl");
+        this.items = response.data.employees || [];
+        this.passportItems = response.data.passports || [];
+        this.adressItems = response.data.adresses || [];
       } catch (error) {
         console.error("Error fetching data: ", error);
       }

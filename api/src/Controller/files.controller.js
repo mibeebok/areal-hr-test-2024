@@ -26,11 +26,11 @@ class FilesController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id_employees, name, file_parh } = req.body;
+    const { id_employees, name, file_parh, create_at } = req.body;
     try {
       const new_files = await pool.query(
-        "INSERT INTO files (id_employees, name, file_parh, add_at) values ($1, $2, $3, NOW()) RETURNING *",
-        [id_employees, name, file_parh]
+        "INSERT INTO files (id_employees, name, file_parh, create_at) values ($1, $2, $3, NOW()) RETURNING *",
+        [id_employees, name, file_parh, create_at]
       );
       res.json(new_files.rows[0]);
     } catch (err) {
@@ -70,11 +70,11 @@ class FilesController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id, id_employees, name, file_parh } = req.body;
+    const { id, id_employees, name, file_parh, update_at } = req.body;
     try {
       const files = await pool.query(
         "UPDATE files SET id_employees = $1, name = $2, file_parh = $3, update_at = NOW() WHERE id = $4 RETURNING *",
-        [id_employees, name, file_parh, id]
+        [id_employees, name, file_parh, update_at, id]
       );
       if (files.rows.length > 0) {
         res.json(files.rows);

@@ -25,16 +25,16 @@
     </div>
     <div class="button-container">
     <div class="button">
-      <button>Добавить запись</button>
+      <button @click="createDepartments">Добавить запись</button>
     </div>
     <div class="button">
-      <button>Удалить запись</button>
+      <button @click="deleteDepartments">Удалить запись</button>
     </div>
     <div class="button">
-      <button>Поиск записи</button>
+      <button @click="getOneDepartments">Поиск записи</button>
     </div>
     <div class="button">
-      <button>Обновить таблицу</button>
+      <button @click="updateDepartments">Обновить таблицу</button>
     </div>
     </div>
   </div>
