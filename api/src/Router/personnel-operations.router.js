@@ -23,7 +23,7 @@ router.put(
   "/personnel_operations",
   personnel_operations_controller.updatePersonnelOperations
 );
-router.delete(
+router.get(
   "/personnel_operations/:id",
   personnel_operations_controller.deletePersonnelOperations
 );
