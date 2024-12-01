@@ -23,26 +23,35 @@
     </div>
     <div class="button-container">
     <div class="button">
-      <button>Добавить запись</button>
+      <button @click="showFormCreateFil = !showFormCreateFil">
+        {{showFormCreateFil ? 'Скрыть форму добавления' : 'Добавить запись'}}
+      </button>
     </div>
     <div class="button">
-      <button>Удалить запись</button>
+      <button @click="deleteFiles">Удалить запись</button>
     </div>
     <div class="button">
-      <button>Поиск записи</button>
+      <button @click="getOneFiles">Поиск записи</button>
     </div>
     <div class="button">
-      <button>Обновить таблицу</button>
+      <button @click="updateFiles">Обновить таблицу</button>
     </div>
     </div>
   </div>
+  <createFiles v-if="showFormCreateFil"/>
 </template>
 <script>
 import axios from "axios";
+import createFiles from "./create-files.vue";
+
 export default {
   name: "TableFiles",
+  components:{
+    createFiles
+  },
   data() {
     return {
+      showFormCreateFil: false,
       items: [],
     };
   },
@@ -58,6 +67,32 @@ export default {
         console.error("Error fetching data: ", error);
       }
     },
+    async deleteFiles() {
+      const filesId = prompt ("Input ID for deleted: ");
+      if(filesId){
+
+      try{
+        await axios.get("http://localhost:8081/Fil/files/:id", filesId);
+        this.fetchData;
+      }catch (error){
+        console.error ("error deleting files: ", error);
+      }
+    }
+    },
+    async getOneFiles () {
+      const getOneFiles = prompt ("Input name for search: ");
+      if (getOneFiles){
+        try{
+          const response = await axios.get ("http://localhost:8081/Fil/files/:id", getOneFiles);
+          this.items = response.data.files || [];
+        }catch (error) {
+          console.error ("Error searching for files: ", error);
+        }
+      }
+    },
+    async updateFiles () {
+      this.fetchData();
+    }
   },
 };
 </script>
