@@ -21,7 +21,10 @@
     </div>
     <div class="button-container">
     <div class="button">
-      <button @click="createOrganizations">Добавить запись</button>
+
+    <button @click="showFormCreateOrg = !showFormCreateOrg">
+      {{ showFormCreateOrg ? 'Скрыть форму добавления' : 'Добавить запись' }}
+    </button>
     </div>
     <div class="button">
       <button @click="deleteOrganizations">Удалить запись</button>
@@ -34,13 +37,19 @@
     </div>
     </div>
   </div>
+    <createOrganization v-if="showFormCreateOrg" />
 </template>
 <script>
 import axios from 'axios'
+import createOrganization from './create-organization.vue';
 export default{
     name: 'TableOrganization',
+    components:{
+      createOrganization
+    },
     data(){
         return{
+          showFormCreateOrg: false,
             items: [],
         };
     },
@@ -50,29 +59,17 @@ export default{
     methods: {
         async fetchData() {
             try{
-                const response = await axios.get(`http://localhost:8081/Org`);
+                const response = await axios.get(`http://localhost:8081/Org/organization`);
                 this.items = response.data;
             }catch (error){
                 console.error("Error fetching data: ", error);
             }
         },
-        async createOrganizations() {
-          const newOrganization = {
-            name: "OOO Organization",
-            comment: "vse horosho! :-)",
-          };
-          try{
-            await axios.post("http://localhost:8081/Org/organization", newOrganization);
-            this.fetchData();
-          }catch(error){
-            console.error("Error creating organization: ", error);
-          }
-        },
         async deleteOrganizations() {
           const organizationId = prompt("Введите ID записи для удаления: ");
           if (organizationId) {
             try {
-              await axios.delete ("http://localhost:8081/Org/organization/:id", organizationId);
+              await axios.get ("http://localhost:8081/Org/organization/:id", organizationId);
               this.fetchData();
             }catch (error) {
               console.error("Error deleting organization: ", error);
@@ -90,7 +87,7 @@ export default{
             }
           }
         },
-        async updateTable (){
+        async updateOrganizations (){
           this.fetchData();
         }
     }
