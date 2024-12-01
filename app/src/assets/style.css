@@ -140,8 +140,20 @@ body {
     color: #ecf0f1;
   }
   
+  textarea {
+    font-size: 16px;
+    font-family: "Arial", sans-serif;
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #d7b48d;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
   input[type="text"],
   input[type="email"],
+  input[type="password"],
   select {
     width: 100%;
     padding: 10px;
@@ -182,3 +194,9 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   }
   
+  .list {
+    border: 1px solid #ccc;
+    background: white;
+    position: absolute;
+    z-index: 1000;
+  }
