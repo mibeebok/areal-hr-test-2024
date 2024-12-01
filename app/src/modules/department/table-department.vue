@@ -10,7 +10,7 @@
             <th>Родительский отдел</th>
             <th>Название</th>
             <th>Комментарий</th>
-          </tr>
+          </tr> 
         </thead>
         <tbody>
           <tr v-for="item in items" :key="item.id">
@@ -25,7 +25,9 @@
     </div>
     <div class="button-container">
     <div class="button">
-      <button @click="createDepartments">Добавить запись</button>
+      <button @click="showFormCreateDep = !showFormCreateDep">
+        {{showFormCreateDep ? 'Скрыть форму добавления' : 'Добавить запись'}}
+      </button>
     </div>
     <div class="button">
       <button @click="deleteDepartments">Удалить запись</button>
@@ -38,13 +40,20 @@
     </div>
     </div>
   </div>
+  <createDepartment v-if="showFormCreateDep" />
 </template>
 <script>
 import axios from "axios";
+import createDepartment from "./create-department.vue";
+
 export default {
   name: "TableDepartment",
+  components: {
+    createDepartment
+  },
   data() {
     return {
+      showFormCreateDep: false,
       items: [],
     };
   },
@@ -60,6 +69,31 @@ export default {
         console.error("Error fetching data: ", error);
       }
     },
+    async deleteDepartments() {
+      const departmentId = prompt ("Введите ID для удаления: ");
+      if (departmentId){
+        try {
+          await axios.get ("http://localhost:8081/Dep/department/:id", departmentId);
+          this.fetchData();
+        } catch (error) {
+          console.error ("Error deleting department: ", error);
+        }
+      }
+    },
+    async getOneDepartments () {
+      const getOneDepartments = prompt (" Введите название для поиска : ");
+      if (getOneDepartments){
+        try{
+          const response = await axios.get ("http://localhost:8081/Dep/department/:id", getOneDepartments);
+          this.items = response.data.departments || [];
+        } catch (error) {
+          console.error ("Error searching for department: ", error);
+        }
+      }
+    },
+    async updateDepartments () {
+      this.fetchData();
+    }
   },
 };
 </script>
