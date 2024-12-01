@@ -18,27 +18,37 @@
       </table>
     </div>
     <div class="button-container">
-    <div class="button">
-      <button>Добавить запись</button>
-    </div>
-    <div class="button">
-      <button>Удалить запись</button>
-    </div>
-    <div class="button">
-      <button>Поиск записи</button>
-    </div>
-    <div class="button">
-      <button>Обновить таблицу</button>
-    </div>
+      <div class="button">
+        <button @click="showFormCreatePos = !showFormCreatePos">
+          {{
+            showFormCreatePos ? "Скрыть форму добавления" : "Добавить запись"
+          }}
+        </button>
+      </div>
+      <div class="button">
+        <button @click="deletePosition">Удалить запись</button>
+      </div>
+      <div class="button">
+        <button @click="getOnePosition">Поиск записи</button>
+      </div>
+      <div class="button">
+        <button @click="updatePosition">Обновить таблицу</button>
+      </div>
     </div>
   </div>
+  <CreatePositions v-if="showFormCreatePos" />
 </template>
 <script>
 import axios from "axios";
+import CreatePositions from "./create-positions.vue";
 export default {
   name: "TablePosition",
+  components: {
+    CreatePositions,
+  },
   data() {
     return {
+      showFormCreatePos: false,
       items: [],
     };
   },
@@ -54,6 +64,31 @@ export default {
         console.error("Error fetchjng data: ", error);
       }
     },
+    async deletePosition() {
+      const positionId = prompt("Input ID for delete: ");
+      if (positionId) {
+        try {
+          await axios.get("http://localhost:8081/Pos/position/:id", positionId);
+          this.fetchData();
+        } catch (error) {
+          console.error("Error deleting position: ", error);
+        }
+      }
+    },
+    async getOnePosition() {
+      const getOnePosition = prompt ("Inpet name for search: ");
+      if(getOnePosition){
+        try{
+          const response = await axios.get("http://localhost:8081/Pos/position", getOnePosition);
+          this.items = response.data.positions || [];
+        } catch(error) {
+          console.error ("Error searching for position: ", error);
+        }
+      }
+    },
+    async updatePosition() {
+      this.fetchData();
+    }
   },
 };
 </script>
