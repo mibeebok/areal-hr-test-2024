@@ -88,26 +88,34 @@
 
     <div class="button-container">
     <div class="button">
-      <button>Добавить запись</button>
+      <button @click="showFormCerateEmpl = !showFormCerateEmpl">
+        {{showFormCerateEmpl ? 'Скрыть форму добавления' : 'Добавить запись'}}</button>
     </div>
     <div class="button">
-      <button>Удалить запись</button>
+      <button @click="deleteEmployees">Удалить запись</button>
     </div>
     <div class="button">
-      <button>Поиск записи</button>
+      <button @click="getOneEmployees">Поиск записи</button>
     </div>
     <div class="button">
-      <button>Обновить таблицу</button>
+      <button @click="updateEmployees">Обновить таблицу</button>
     </div>
     </div>
   </div>
+  <createEmployees v-if="showFormCerateEmpl"/>
 </template>
 <script>
 import axios from "axios";
+import createEmployees from "./create-employees.vue";
+
 export default {
   name: "TableEmployee",
+  components: {
+    createEmployees
+  },
   data() {
     return {
+      showFormCerateEmpl: false,
       items: [],
       passportItems: [],
       adressItems: [],
@@ -127,6 +135,31 @@ export default {
         console.error("Error fetching data: ", error);
       }
     },
+    async deleteEmployees() {
+      const employeesId = prompt ("Input ID for delete: ");
+      if (employeesId) {
+        try{
+          await axios.get ("http://localhost:8081/Empl/employees/:id", employeesId);
+          this.fetchData();
+        }catch (error) {
+          console.error ("Error deleting employees: ", error);
+        }
+      }
+    },
+    async getOneEmployees () {
+      const getOneEmployees = prompt ("Input name for search: ");
+      if (getOneEmployees) {
+        try{
+          const response = await axios.get ("http://localhost:8081/Empl/employees/:id", getOneEmployees);
+          this.items = response.data.employees || [];
+        }catch (error){
+          console.error ("Error searching for employees: ", error);
+        }
+      }
+    },
+    async updateEmployees () {
+      this.fetchData();
+    }
   },
 };
 </script>
