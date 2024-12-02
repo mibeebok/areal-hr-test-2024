@@ -22,6 +22,7 @@
       </form>
     </div>
     <div class="container1">
+      <h2>Паспортные данные</h2>
       <form @submit.prevent="createPassportData">
         <div class="container2">
           <label for="series">Серия: </label>
@@ -46,6 +47,7 @@
       </form>
     </div>
     <div class="container1">
+      <h2>Адрес регистрации</h2>
       <form @submit.prevent="cretaeRegistrationAdress">
         <div class="container2">
           <label for="region">Область: </label>
