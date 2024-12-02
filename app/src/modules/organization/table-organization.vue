@@ -77,7 +77,7 @@ export default{
           }
         },
         async getOneOrganizations() {
-          const getOneOrganization = prompt ("Введите название для поиска: ");
+          const getOneOrganization = prompt ("Введите ID для поиска: ");
           if (getOneOrganization) {
             try{
               const response = await axios.get ("http://localhost:8081/Org/organization/:id", getOneOrganization);

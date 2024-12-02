@@ -127,7 +127,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get("http://localhost:8081/Empl");
+        const response = await axios.get("http://localhost:8081/Empl/employees");
         this.items = response.data.employees || [];
         this.passportItems = response.data.passports || [];
         this.adressItems = response.data.adresses || [];
@@ -136,7 +136,7 @@ export default {
       }
     },
     async deleteEmployees() {
-      const employeesId = prompt ("Input ID for delete: ");
+      const employeesId = prompt ("Введите ID для удаления: ");
       if (employeesId) {
         try{
           await axios.get ("http://localhost:8081/Empl/employees/:id", employeesId);
@@ -147,7 +147,7 @@ export default {
       }
     },
     async getOneEmployees () {
-      const getOneEmployees = prompt ("Input name for search: ");
+      const getOneEmployees = prompt ("Введите ID для поиска: ");
       if (getOneEmployees) {
         try{
           const response = await axios.get ("http://localhost:8081/Empl/employees/:id", getOneEmployees);

@@ -58,17 +58,17 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/Pos`);
+        const response = await axios.get(`http://localhost:8081/Pos/positions`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetchjng data: ", error);
       }
     },
     async deletePosition() {
-      const positionId = prompt("Input ID for delete: ");
+      const positionId = prompt("Введите ID для удаления: ");
       if (positionId) {
         try {
-          await axios.get("http://localhost:8081/Pos/position/:id", positionId);
+          await axios.get("http://localhost:8081/Pos/positions/:id", positionId);
           this.fetchData();
         } catch (error) {
           console.error("Error deleting position: ", error);
@@ -76,10 +76,10 @@ export default {
       }
     },
     async getOnePosition() {
-      const getOnePosition = prompt ("Inpet name for search: ");
+      const getOnePosition = prompt ("Введите ID для поиска: ");
       if(getOnePosition){
         try{
-          const response = await axios.get("http://localhost:8081/Pos/position", getOnePosition);
+          const response = await axios.get("http://localhost:8081/Pos/positions/:id", getOnePosition);
           this.items = response.data.positions || [];
         } catch(error) {
           console.error ("Error searching for position: ", error);

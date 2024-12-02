@@ -88,7 +88,7 @@ export default {
       }
     },
     async getOneOperation() {
-      const getOneOperation = prompt(" Введите название для поиска : ");
+      const getOneOperation = prompt("Введите ID для поиска: ");
       if (getOneOperation) {
         try {
           const response = await axios.get(

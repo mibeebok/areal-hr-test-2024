@@ -61,14 +61,14 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/Fil`);
+        const response = await axios.get(`http://localhost:8081/Fil/files`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
     },
     async deleteFiles() {
-      const filesId = prompt ("Input ID for deleted: ");
+      const filesId = prompt ("Введите ID для удаления: ");
       if(filesId){
 
       try{
@@ -80,7 +80,7 @@ export default {
     }
     },
     async getOneFiles () {
-      const getOneFiles = prompt ("Input name for search: ");
+      const getOneFiles = prompt ("Введите ID для поиска: ");
       if (getOneFiles){
         try{
           const response = await axios.get ("http://localhost:8081/Fil/files/:id", getOneFiles);

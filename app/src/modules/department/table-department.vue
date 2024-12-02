@@ -63,7 +63,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/Dep`);
+        const response = await axios.get(`http://localhost:8081/Dep/departments`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -73,7 +73,7 @@ export default {
       const departmentId = prompt ("Введите ID для удаления: ");
       if (departmentId){
         try {
-          await axios.get ("http://localhost:8081/Dep/department/:id", departmentId);
+          await axios.get ("http://localhost:8081/Dep/departments/:id", departmentId);
           this.fetchData();
         } catch (error) {
           console.error ("Error deleting department: ", error);
@@ -81,10 +81,10 @@ export default {
       }
     },
     async getOneDepartments () {
-      const getOneDepartments = prompt (" Введите название для поиска : ");
+      const getOneDepartments = prompt ("Введите ID для поиска: ");
       if (getOneDepartments){
         try{
-          const response = await axios.get ("http://localhost:8081/Dep/department/:id", getOneDepartments);
+          const response = await axios.get ("http://localhost:8081/Dep/departments/:id", getOneDepartments);
           this.items = response.data.departments || [];
         } catch (error) {
           console.error ("Error searching for department: ", error);
