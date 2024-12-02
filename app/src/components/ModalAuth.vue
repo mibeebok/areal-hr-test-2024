@@ -3,8 +3,8 @@
       <div id="modal-content">
         <h2 class="title2">Авторизация</h2>
         <form @submit.prevent="login">
-          <input type="text" v-model="username" placeholder="Логин" required /><br /><br />
-          <input type="password" v-model="password" placeholder="Пароль" required /><br /><br />
+          <input type="text" v-model="username" placeholder="user" required /><br /><br />
+          <input type="password" v-model="password" placeholder="123" required /><br /><br />
           <button type="submit">Войти</button>
         </form>
         <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
