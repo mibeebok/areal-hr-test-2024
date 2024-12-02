@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: ./containers/app
+    ports:
+      - "8080:8080"
+
+  api:
+    build:
+      context: ./containers/api
+    ports:
+      - "8081:8081"
+
+  nginx:
+    build:
+      context: ./containers/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    volumes:
+    - ./containers/nginx/nginx.conf:/etc/nginx/nginx.conf
+
