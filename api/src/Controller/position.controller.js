@@ -1,54 +1,6 @@
 const pool = require("../db/db.client");
 
-//Validate Position
-const Joi = require("joi");
-
-const createPositionsSchema = Joi.object({
-  name: Joi.string().min(5).max(100).required(),
-});
-const getOnePositionsSchema = Joi.object({
-  id: Joi.number().integer().required(),
-});
-const updatePositionsSchema = Joi.object({
-  name: Joi.string().min(5).max(100).required(),
-  id: Joi.number().integer().required(),
-});
-
-//Loging changes
-/*
-const logingChangesPositions = `
-CREATE OR REPLACE FUNCTION logingChangesPositions()
-RETURNS TRIGGER AS $$
-DECLARE
-  roles_caption TEXT;
-BEGIN
-
-    SELECT r.capton INTO roles_caption
-    FROM roles r
-    WHERE r.id = (SELECT id_roles FROM specialist)
-
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at)
-    VALUES (
-        NOW(),
-        COALESCE(roles_caption, 'unknow'),
-        'positions',
-        jsonb_build_object(
-            'old', row_to_json(OLD),
-            'new', row_to_json(NEW)
-        ),
-        NOW()
-    );
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-`;
-
-const logingChangesPositionsTrigger = `
-CREATE TRIGGER logingChangesPositionsTrigger
-AFTER INSERT OR UPDATE OR DELETE ON positions
-FOR EACH ROW EXECUTE FUNCTION logingChangesPositions();
-`;
-*/
+import {createPositionsSchema, getOnePositionsSchema, updatePositionsSchema} from "./dto/position.dto"; 
 
 //Position
 class PositionController {
@@ -58,23 +10,17 @@ class PositionController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { name, create_at } = req.body;
+    const { name } = req.body;
     try {
       const new_position = await pool.query(
         "INSERT INTO positions (name, create_at) values ($1, NOW()) RETURNING *",
-        [name, create_at]
+        [name]
       );
       const positionHistory = await pool.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
           (req.user.id, "Должность", JSON.stringify(result.rows[0]))
         ]
       );
-
-      /*
-      await pool.query(logingChangesPositions);
-      await pool.query(logingChangesPositionsTrigger);
-      */
-
       res.json(new_position.rows[0]);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -115,11 +61,11 @@ class PositionController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id, name, update_at } = req.body;
+    const { id, name } = req.body;
     try {
       const positions = await pool.query(
         "UPDATE positions SET name = $1, update_at = NOW() WHERE id = $2 RETURNING *",
-        [name, id, update_at]
+        [name, id]
       );
       if (positions.rows.length > 0) {
         res.json(positions.rows);

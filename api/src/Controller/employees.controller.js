@@ -1,63 +1,6 @@
 const pool = require("../db/db.client");
 
-//Validate Employees
-const Joi = require("joi");
-
-const createEmployeesSchema = Joi.object({
-  first_name: Joi.string().alphanum().min(5).max(100).required(),
-  name: Joi.string().alphanum().min(3).max(100).required(),
-  patronymic: Joi.string().alphanum().min(5).max(100).required(),
-  date_of_birth: Joi.date().required(),
-  id_passport_data: Joi.number().integer().required(),
-  id_registration_address: Joi.number().integer().required(),
-});
-const getOneEmployeesSchema = Joi.object({
-  id: Joi.number().integer().required(),
-});
-const updateEmployeesSchema = Joi.object({
-  first_name: Joi.string().alphanum().min(5).max(100).required(),
-  name: Joi.string().alphanum().min(3).max(100).required(),
-  patronymic: Joi.string().alphanum().min(5).max(100).required(),
-  date_of_birth: Joi.date().required(),
-  id_passport_data: Joi.number().integer().required(),
-  id_registration_address: Joi.number().integer().required(),
-  id: Joi.number().integer().required(),
-});
-
-//Loging changes
-/*
-const logingChangesEmployees = `
-CREATE OR REPLACE FUNCTION logingChangesEmployees()
-RETURNS TRIGGER AS $$
-DECLARE
-  roles_caption TEXT;
-BEGIN
-    SELECT r.capton INTO roles_caption
-    FROM roles r
-    WHERE r.id = (SELECT id_roles FROM specialist)
-
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at)
-    VALUES (
-        NOW(),
-        COALESCE(roles_caption, 'unknow'),
-        'Employees',
-        jsonb_build_object(
-            'old', row_to_json(OLD),
-            'new', row_to_json(NEW)
-        ),
-        NOW()
-    );
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-`;
-
-const logingChangesEmployeesTrigger = `
-CREATE TRIGGER logingChangesEmployeesTrigger
-AFTER INSERT OR UPDATE OR DELETE ON employees
-FOR EACH ROW EXECUTE FUNCTION logingChangesEmployees();
-`;
-*/
+import { createEmployeesSchema, getOneEmployeesSchema, updateEmployeesSchema } from "./dto/employees.dto";
 
 //Employees
 class EmployeesController {
@@ -74,7 +17,6 @@ class EmployeesController {
       date_of_birth,
       passportData,
       registrationAdress,
-      create_at,
     } = req.body;
     try {
       const passportResult = await pool.query(
@@ -85,7 +27,6 @@ class EmployeesController {
           passportData.date_of_issue,
           passportData.unit_code,
           passportData.issued_by_whom,
-          passportData.create_at,
         ]
       );
 
@@ -102,7 +43,6 @@ class EmployeesController {
           registrationAdress.house,
           registrationAdress.building,
           registrationAdress.apartament,
-          registrationAdress.create_at,
         ]
       );
 
@@ -110,7 +50,7 @@ class EmployeesController {
       const id_registration_adress = adressResult.rows[0].id;
 
       const new_employees = await pool.query(
-        "INSERT INTO employees (first_name, name, patronymic, date_of_birth, id_passport_data, id_registration_adress, create_at) values ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING *",
+        "INSERT INTO employees (first_name, name, patronymic, date_of_birth, id_passport_data, id_registration_adress, create_at) values ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING id",
         [
           first_name,
           name,
@@ -118,22 +58,29 @@ class EmployeesController {
           date_of_birth,
           id_passport_data,
           id_registration_adress,
-          create_at,
         ]
       );
 
-      const employeesHistory = await pool.query(
+      const id_employees = new_employees.rows[0].id;
+
+      const file_path = req.body.file_path; 
+      await pool.query(
+        `INSERT INTO files (id_employees, name, file_path)
+        VALUES ($1, $2, $3)`,
+        [
+          id_employees,
+          name,
+          file_path
+        ]
+      );
+
+
+      await pool.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Сотрудники", JSON.stringify(result.rows[0]))
+          (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
         ]
       );
-
-      /*
-      await pool.query(logingChangesEmployees);
-      await pool.query(logingChangesEmployeesTrigger);
-      */
-
-      res.json(new_employees.rows[0]);
+      res.status(201).json(new_employees.rows[0]);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -153,7 +100,8 @@ class EmployeesController {
         r.street, 
         r.house, 
         r.building, 
-        r.apartament 
+        r.apartament,
+        files *
     FROM employees e
     LEFT JOIN passport_data p ON e.id_passport_data = p.id
     LEFT JOIN registration_adress r ON e.id_registration_adress = r.id`);
@@ -183,7 +131,8 @@ class EmployeesController {
       r.street, 
       r.house, 
       r.building, 
-      r.apartament 
+      r.apartament,
+      files *
     FROM employees e
     LEFT JOIN passport_data p ON e.id_passport_data = p.id
     LEFT JOIN registration_address r ON e.id_registration_address = r.id
@@ -191,7 +140,7 @@ class EmployeesController {
         [id]
       );
       if (employees.rows.length > 0) {
-        res.json(employees.rows);
+        res.json(employees.rows[0]);
       } else {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
@@ -212,7 +161,6 @@ class EmployeesController {
       date_of_birth,
       passport,
       adress,
-      update_at,
     } = req.body;
     const id = req.params.id;
     const id_passport_data = passport.id;
@@ -228,7 +176,6 @@ class EmployeesController {
           passport.date_of_issue,
           passport.unit_code,
           passport.issued_by_whom,
-          passport.update_at,
           id_passport_data,
         ]
       );
@@ -244,12 +191,11 @@ class EmployeesController {
           adress.house,
           adress.building,
           adress.apartament,
-          adress.update_at,
           id_registration_adress,
         ]
       );
       const employees = await pool.query(
-        "UPDATE employees set first_name = $1, name = $2, patronymic = $3, date_of_birth = $4, id_passport_data = $5, id_registration_adress = $6, update_at = NOW() WHERE id = $7 RETURNING *",
+        "UPDATE employees set first_name = $1, name = $2, patronymic = $3, date_of_birth = $4, id_passport_data = $5, id_registration_adress = $6, update_at = NOW() WHERE id = $7",
         [
           first_name,
           name,
@@ -257,8 +203,19 @@ class EmployeesController {
           date_of_birth,
           id_passport_data,
           id_registration_adress,
-          update_at,
           id,
+          id_employees
+        ]
+      );
+      const id_employees = employees.rows[0].id;
+      const file_path = req.body.file_path; 
+      await pool.query (
+        "UPDATE files set id_employees = $1, name =$2, file_path = $3 where id = $4",
+        [
+          id_employees,
+          name,
+          file_path,
+          id
         ]
       );
 

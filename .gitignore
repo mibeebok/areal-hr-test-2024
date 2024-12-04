@@ -2,8 +2,5 @@
 node_modules/
 
 # Игнорировать файл .env
-docs/.env
-
-# Игнорировать файлы
 .env
-docs/.env
+
