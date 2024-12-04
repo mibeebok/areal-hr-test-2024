@@ -1,4 +1,4 @@
-const pool = require('../db/db.client')
+const pool = require("../db/db.client");
 
 //Validate Employees
 const Joi = require("joi");
@@ -25,6 +25,7 @@ const updateEmployeesSchema = Joi.object({
 });
 
 //Loging changes
+/*
 const logingChangesEmployees = `
 CREATE OR REPLACE FUNCTION logingChangesEmployees()
 RETURNS TRIGGER AS $$
@@ -35,7 +36,7 @@ BEGIN
     FROM roles r
     WHERE r.id = (SELECT id_roles FROM specialist)
 
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at)
     VALUES (
         NOW(),
         COALESCE(roles_caption, 'unknow'),
@@ -56,6 +57,7 @@ CREATE TRIGGER logingChangesEmployeesTrigger
 AFTER INSERT OR UPDATE OR DELETE ON employees
 FOR EACH ROW EXECUTE FUNCTION logingChangesEmployees();
 `;
+*/
 
 //Employees
 class EmployeesController {
@@ -72,18 +74,18 @@ class EmployeesController {
       date_of_birth,
       passportData,
       registrationAdress,
-      add_at,
+      create_at,
     } = req.body;
     try {
       const passportResult = await pool.query(
-        "INSERT INTO passport_data (series, number, date_of_issue, unit_code, issued_by_whom, add_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id",
+        "INSERT INTO passport_data (series, number, date_of_issue, unit_code, issued_by_whom, create_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id",
         [
           passportData.series,
           passportData.number,
           passportData.date_of_issue,
           passportData.unit_code,
           passportData.issued_by_whom,
-          passportData.add_at,
+          passportData.create_at,
         ]
       );
 
@@ -91,7 +93,7 @@ class EmployeesController {
       const id_passport_data = passportResult.rows[0].id;
 
       const adressResult = await pool.query(
-        `INSERT INTO registration_adress (region, locality, street, house, building, apartament, add_at) 
+        `INSERT INTO registration_adress (region, locality, street, house, building, apartament, create_at) 
          VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING id`,
         [
           registrationAdress.region,
@@ -100,7 +102,7 @@ class EmployeesController {
           registrationAdress.house,
           registrationAdress.building,
           registrationAdress.apartament,
-          registrationAdress.add_at,
+          registrationAdress.create_at,
         ]
       );
 
@@ -108,7 +110,7 @@ class EmployeesController {
       const id_registration_adress = adressResult.rows[0].id;
 
       const new_employees = await pool.query(
-        "INSERT INTO employees (first_name, name, patronymic, date_of_birth, id_passport_data, id_registration_adress, add_at) values ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING *",
+        "INSERT INTO employees (first_name, name, patronymic, date_of_birth, id_passport_data, id_registration_adress, create_at) values ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING *",
         [
           first_name,
           name,
@@ -116,12 +118,20 @@ class EmployeesController {
           date_of_birth,
           id_passport_data,
           id_registration_adress,
-          add_at,
+          create_at,
         ]
       );
 
+      const employeesHistory = await pool.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.id, "Сотрудники", JSON.stringify(result.rows[0]))
+        ]
+      );
+
+      /*
       await pool.query(logingChangesEmployees);
       await pool.query(logingChangesEmployeesTrigger);
+      */
 
       res.json(new_employees.rows[0]);
     } catch (err) {

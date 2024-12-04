@@ -21,26 +21,35 @@
     </div>
     <div class="button-container">
     <div class="button">
-      <button>Добавить запись</button>
+
+    <button @click="showFormCreateOrg = !showFormCreateOrg">
+      {{ showFormCreateOrg ? 'Скрыть форму добавления' : 'Добавить запись' }}
+    </button>
     </div>
     <div class="button">
-      <button>Удалить запись</button>
+      <button @click="deleteOrganizations">Удалить запись</button>
     </div>
     <div class="button">
-      <button>Поиск записи</button>
+      <button @click="getOneOrganizations">Поиск записи</button>
     </div>
     <div class="button">
-      <button>Обновить таблицу</button>
+      <button @click="updateOrganizations">Обновить таблицу</button>
     </div>
     </div>
   </div>
+    <createOrganization v-if="showFormCreateOrg" />
 </template>
 <script>
 import axios from 'axios'
+import createOrganization from './create-organization.vue';
 export default{
     name: 'TableOrganization',
+    components:{
+      createOrganization
+    },
     data(){
         return{
+          showFormCreateOrg: false,
             items: [],
         };
     },
@@ -50,11 +59,36 @@ export default{
     methods: {
         async fetchData() {
             try{
-                const response = await axios.get(`http://localhost:8081/Org`);
+                const response = await axios.get(`http://localhost:8081/Org/organization`);
                 this.items = response.data;
             }catch (error){
                 console.error("Error fetching data: ", error);
             }
+        },
+        async deleteOrganizations() {
+          const organizationId = prompt("Введите ID записи для удаления: ");
+          if (organizationId) {
+            try {
+              await axios.get ("http://localhost:8081/Org/organization/:id", organizationId);
+              this.fetchData();
+            }catch (error) {
+              console.error("Error deleting organization: ", error);
+            }
+          }
+        },
+        async getOneOrganizations() {
+          const getOneOrganization = prompt ("Введите ID для поиска: ");
+          if (getOneOrganization) {
+            try{
+              const response = await axios.get ("http://localhost:8081/Org/organization/:id", getOneOrganization);
+              this.items = response.data.organizations || [];
+            } catch (error) {
+              console.error("Error searching for organizations: ", error);
+            }
+          }
+        },
+        async updateOrganizations (){
+          this.fetchData();
         }
     }
 }

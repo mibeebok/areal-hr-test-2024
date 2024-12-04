@@ -11,6 +11,6 @@ router.post("/files", files_controller.createFiles);
 router.get("/files", files_controller.getFiles);
 router.get("/files/:id", files_controller.getOneFiles);
 router.put("/files", files_controller.updateFiles);
-router.delete("/files/:id", files_controller.deleteFiles);
+router.get("/files/:id", files_controller.deleteFiles);
 
 module.exports = router;

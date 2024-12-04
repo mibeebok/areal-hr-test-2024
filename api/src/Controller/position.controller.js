@@ -1,4 +1,4 @@
-const pool = require('../db/db.client')
+const pool = require("../db/db.client");
 
 //Validate Position
 const Joi = require("joi");
@@ -15,6 +15,7 @@ const updatePositionsSchema = Joi.object({
 });
 
 //Loging changes
+/*
 const logingChangesPositions = `
 CREATE OR REPLACE FUNCTION logingChangesPositions()
 RETURNS TRIGGER AS $$
@@ -26,7 +27,7 @@ BEGIN
     FROM roles r
     WHERE r.id = (SELECT id_roles FROM specialist)
 
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at)
     VALUES (
         NOW(),
         COALESCE(roles_caption, 'unknow'),
@@ -47,6 +48,8 @@ CREATE TRIGGER logingChangesPositionsTrigger
 AFTER INSERT OR UPDATE OR DELETE ON positions
 FOR EACH ROW EXECUTE FUNCTION logingChangesPositions();
 `;
+*/
+
 //Position
 class PositionController {
   //CREATEA
@@ -55,15 +58,22 @@ class PositionController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { name, add_at } = req.body;
+    const { name, create_at } = req.body;
     try {
       const new_position = await pool.query(
-        "INSERT INTO positions (name, add_at) values ($1, NOW()) RETURNING *",
-        [name, add_at]
+        "INSERT INTO positions (name, create_at) values ($1, NOW()) RETURNING *",
+        [name, create_at]
+      );
+      const positionHistory = await pool.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.id, "Должность", JSON.stringify(result.rows[0]))
+        ]
       );
 
+      /*
       await pool.query(logingChangesPositions);
       await pool.query(logingChangesPositionsTrigger);
+      */
 
       res.json(new_position.rows[0]);
     } catch (err) {
@@ -105,11 +115,11 @@ class PositionController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { id, name } = req.body;
+    const { id, name, update_at } = req.body;
     try {
       const positions = await pool.query(
         "UPDATE positions SET name = $1, update_at = NOW() WHERE id = $2 RETURNING *",
-        [name, id]
+        [name, id, update_at]
       );
       if (positions.rows.length > 0) {
         res.json(positions.rows);

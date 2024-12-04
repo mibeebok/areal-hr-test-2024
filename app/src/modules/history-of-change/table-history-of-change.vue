@@ -25,16 +25,10 @@
     </div>
     <div class="button-container">
     <div class="button">
-      <button>Добавить запись</button>
+      <button @click="getOneHistoryOfChange">Поиск записи</button>
     </div>
     <div class="button">
-      <button>Удалить запись</button>
-    </div>
-    <div class="button">
-      <button>Поиск записи</button>
-    </div>
-    <div class="button">
-      <button>Обновить таблицу</button>
+      <button @click="updateHistoryOfChange">Обновить таблицу</button>
     </div>
     </div>
   </div>
@@ -54,11 +48,25 @@ export default{
     methods: {
         async fetchData() {
             try{
-                const response = await axios.get (`http://localhost:8081/His`);
+                const response = await axios.get (`http://localhost:8081/His/history_of_change`);
                 this.items = response.data;
             }catch (error){
                 console.error("Error fetching data: ", error);
             }
+        },
+        async getOneHistoryOfChange() {
+          const getOneHistoryOfChange = prompt ("Введите ID для поиска: ");
+          if (getOneHistoryOfChange){
+            try{
+              const response = await axios.get ("hhtp://localhost:8081/His/history_of_change/:id", getOneHistoryOfChange);
+              this.items = response.data.histirys || [];
+            }catch (error){
+              console.error("Error searching for history of change: ", error);
+            }
+          }
+        },
+        async updateHistoryOfChange() {
+          this.fetchData();
         }
     }
 }

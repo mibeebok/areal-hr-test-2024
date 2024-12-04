@@ -1,4 +1,4 @@
-const pool = require('../db/db.client')
+const pool = require("../db/db.client");
 
 //Validate Organization
 const Joi = require("joi");
@@ -17,6 +17,7 @@ const updateOrganizationSchema = Joi.object({
 });
 
 //Loging changes
+/*
 const logingChangesOrganization = `
 CREATE OR REPLACE FUNCTION logingChangesOrganization()
 RETURNS TRIGGER AS $$
@@ -49,6 +50,7 @@ CREATE TRIGGER logingChangesOrganizationTrigger
 AFTER INSERT OR UPDATE OR DELETE ON organizations
 FOR EACH ROW EXECUTE FUNCTION logingChangesOrganization();
 `;
+*/
 
 //Organization
 class OrganizationController {
@@ -58,15 +60,22 @@ class OrganizationController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const { name, comment } = req.body;
+    const { name, comment, create_at } = req.body;
     try {
       const organizations = await pool.query(
-        "INSERT INTO organizations (name, comment, add_at) values ($1, $2. NOW()) RETURNING *",
-        [name, comment]
+        "INSERT INTO organizations (name, comment, create_at) values ($1, $2. NOW()) RETURNING *",
+        [name, comment, create_at]
+      );
+      const organizationHistory = await pool.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.id, "Организация", JSON.stringify(result.rows[0]))
+        ]
       );
 
+      /*
       await pool.query(logingChangesOrganization);
       await pool.query(logingChangesOrganizationTrigger);
+      */
 
       res.json(organizations.rows);
     } catch (err) {

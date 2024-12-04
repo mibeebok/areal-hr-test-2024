@@ -1,4 +1,4 @@
-const pool = require('../db/db.client')
+const pool = require("../db/db.client");
 
 //Validate Personnel operations
 const Joi = require("joi");
@@ -25,6 +25,7 @@ const updatePersonnelOperationsSchema = Joi.object({
 });
 
 //Loging changes
+/*
 const logingChangesPersonnelOperation = `
 CREATE OR REPLACE FUNCTION logingChangesPersonnelOperation()
 RETURNS TRIGGER AS $$
@@ -36,7 +37,7 @@ BEGIN
     FROM roles r
     WHERE r.id = (SELECT id_roles FROM specialist)
 
-    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, add_at)
+    INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at)
     VALUES (
         NOW(),
         COALESCE (roles_caption, 'unknow'),
@@ -57,6 +58,7 @@ CREATE TRIGGER logingChangesPersonnelOperationTrigger
 AFTER INSERT OR UPDATE OR DELETE ON personnel_operations
 FOR EACH ROW EXECUTE FUNCTION logingChangesPersonnelOperation();
 `;
+*/
 
 //Personnel operations
 class PersonnelOperationsController {
@@ -73,10 +75,11 @@ class PersonnelOperationsController {
       setting_the_salary,
       salary_change,
       dismissal_from_work,
+      create_at,
     } = req.body;
     try {
       const new_personnel_operations = await pool.query(
-        "INSERT INTO personnel_operations (id_employee, id_department, id_position, setting_the_salary, salary_change, dismissal_from_work, add_at) values ($1, $2, $3, $4, $5, false, NOW()) RETURNING *",
+        "INSERT INTO personnel_operations (id_employee, id_department, id_position, setting_the_salary, salary_change, dismissal_from_work, create_at) values ($1, $2, $3, $4, $5, false, NOW()) RETURNING *",
         [
           id_employee,
           id_department,
@@ -84,11 +87,19 @@ class PersonnelOperationsController {
           setting_the_salary,
           salary_change,
           dismissal_from_work,
+          create_at,
+        ]
+      );
+      const operationHistory = await pool.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.id, "Кадровые операции", JSON.stringify(result.rows[0]))
         ]
       );
 
+      /*
       await pool.query(logingChangesPersonnelOperation);
       await pool.query(logingChangesPersonnelOperationTrigger);
+      */
 
       res.json(new_personnel_operations.rows[0]);
     } catch (err) {

@@ -1,4 +1,7 @@
 <template>
+  <div id="app">
+    <modal-auth v-if="!isAuthenticated" @authenticated="handleAuthentication"></modal-auth>
+  </div>
   <div class="container1">
     <h2>Управление сотрудниками организаций</h2>
 
@@ -7,7 +10,7 @@
         <button @click="setActiveComponent('organization')">ОРГАНИЗАЦИЯ</button>
       </div>
       <div class="button">
-        <button @@click="setActiveComponent('department')">ОТДЕЛ</button>
+        <button @click="setActiveComponent('department')">ОТДЕЛ</button>
         <tableDepartment v-if="showDepartment" />
       </div>
       <div class="button">
@@ -35,6 +38,11 @@
 </template>
 
 <script>
+
+
+import ModalAuth from './components/ModalAuth.vue'; // Импортируем компонент модального окна
+
+
 import TableDepartment from "./modules/department/table-department.vue";
 import TableEmployee from "./modules/employees/table-employees.vue";
 import TableFiles from "./modules/files/table-files.vue";
@@ -46,6 +54,7 @@ import TablePosition from "./modules/position/table-positions.vue";
 export default {
   name: "App",
   components: {
+    ModalAuth,
     TableDepartment,
     TableEmployee,
     TableFiles,
@@ -56,10 +65,14 @@ export default {
   },
   data() {
     return {
+      isAuthenticated: false, // Состояние аутентификации,
       activeComponent: null,
     };
   },
   methods: {
+      handleAuthentication() {
+      this.isAuthenticated = true; // Устанавливаем состояние аутентификации
+    },
     setActiveComponent(component) {
       switch (component) {
         case "organization":
@@ -71,7 +84,7 @@ export default {
         case "position":
           this.activeComponent = TablePosition;
           break;
-        case "employee":
+        case "employees":
           this.activeComponent = TableEmployee;
           break;
         case "files":

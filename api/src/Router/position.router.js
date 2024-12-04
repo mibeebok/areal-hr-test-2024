@@ -11,6 +11,6 @@ router.post("/positions", position_controller.createPositions);
 router.get("/positions", position_controller.getPositions);
 router.get("/positions/:id", position_controller.getOnePositions);
 router.put("/positions", position_controller.updatePositions);
-router.delete("/positions/:id", position_controller.deletePositions);
+router.get("/positions/:id", position_controller.deletePositions);
 
 module.exports = router;
