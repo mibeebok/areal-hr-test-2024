@@ -69,6 +69,7 @@ class DepartmentController {
     }
     const { id_organization, parent, name, comment, create_add } = req.body;
     try {
+      // Todo create_at не должно приходить с фронта, заполняем на бэке. Поправить везде
       const departments = await pool.query(
         "INSERT INTO departments (id_organization, parent, name, comment, create_at) values ($1, $2, $3, $4, NOW()) RETURNING *",
         [id_organization, parent, name, comment, create_add]

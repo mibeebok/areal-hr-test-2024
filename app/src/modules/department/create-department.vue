@@ -60,8 +60,10 @@ export default {
     this.fetchOrganizations();
   },
   methods: {
+    // Todo вынести запросы к бэку в папку api в этой же директории, поправить везде
     async fetchOrganizations() {
       try {
+        // Todo вынести аксиос в отдельный инстанс и его использовать
         const response = await axios.get(
           "http://localhost:8081/Org/organizations"
         );
@@ -86,6 +88,7 @@ export default {
             parent: this.parent,
             name: this.name,
             comment: this.comment,
+            // Todo create_at не должно отправляться с фронта, заполняем на бэке. Поправить везде
             create_at: new Date(),
           }
         );

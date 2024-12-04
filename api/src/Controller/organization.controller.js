@@ -62,10 +62,12 @@ class OrganizationController {
     }
     const { name, comment, create_at } = req.body;
     try {
+      //Todo Когда выполняются несколько запросов на изменение данных в бд необходимо использовать транзацкии. Везде поправить
       const organizations = await pool.query(
         "INSERT INTO organizations (name, comment, create_at) values ($1, $2. NOW()) RETURNING *",
         [name, comment, create_at]
       );
+
       const organizationHistory = await pool.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
           (req.user.id, "Организация", JSON.stringify(result.rows[0]))
@@ -123,6 +125,9 @@ class OrganizationController {
         "UPDATE organizations SET name = $1, comment = $2, update_at = NOW() WHERE id = $3 RETURNING *",
         [name, comment, update_at, id]
       );
+
+      //Todo а где создание истории изменений? . Везде поправить
+
       if (organizations.rows.length > 0) {
         res.json(organizations.rows[0]);
       } else {
