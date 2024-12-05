@@ -1,7 +1,6 @@
-const pool = require('../db/db.client')
+const pool = require("../db/db.client");
 
-
-import { getOneHistoryOfChangeSchema } from './dto/history-of-change.dto';
+import { getOneHistoryOfChangeSchema } from "./dto/history-of-change.dto";
 
 //History of change
 class HistoryOfChangeController {

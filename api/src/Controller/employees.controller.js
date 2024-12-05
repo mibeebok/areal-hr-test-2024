@@ -1,6 +1,10 @@
 const pool = require("../db/db.client");
 
-import { createEmployeesSchema, getOneEmployeesSchema, updateEmployeesSchema } from "./dto/employees.dto";
+import {
+  createEmployeesSchema,
+  getOneEmployeesSchema,
+  updateEmployeesSchema,
+} from "./dto/employees.dto";
 
 //Employees
 class EmployeesController {
@@ -20,7 +24,7 @@ class EmployeesController {
       registrationAdress,
     } = req.body;
     try {
-      await client.query('BEGIN');
+      await client.query("BEGIN");
       const passportResult = await client.query(
         "INSERT INTO passport_data (series, number, date_of_issue, unit_code, issued_by_whom, create_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id",
         [
@@ -65,27 +69,21 @@ class EmployeesController {
 
       const id_employees = new_employees.rows[0].id;
 
-      const file_path = req.body.file_path; 
+      const file_path = req.body.file_path;
       await client.query(
         `INSERT INTO files (id_employees, name, file_path)
         VALUES ($1, $2, $3)`,
-        [
-          id_employees,
-          name,
-          file_path
-        ]
+        [id_employees, name, file_path]
       );
-
-
       await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
           (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
         ]
       );
-      await client.query ('COMMIT');
+      await client.query("COMMIT");
       res.status(201).json(new_employees.rows[0]);
     } catch (err) {
-      await client.query ('RPLLBACK');
+      await client.query("RPLLBACK");
       res.status(500).json({ error: err.message });
     } finally {
       client.release();
@@ -161,19 +159,15 @@ class EmployeesController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const {
-      first_name,
-      name,
-      patronymic,
-      date_of_birth,
-      passport,
-      adress,
-    } = req.body;
+    const client = await pool.connect();
+    const { first_name, name, patronymic, date_of_birth, passport, adress } =
+      req.body;
     const id = req.params.id;
     const id_passport_data = passport.id;
     const id_registration_adress = adress.id;
     try {
-      await pool.query(
+      await client.query("BEGIN");
+      await client.query(
         `UPDATE passport_data 
          SET series = $1, number = $2, date_of_issue = $3, unit_code = $4, issued_by_whom = $5, update_at = NOW()
          WHERE id = $6`,
@@ -187,7 +181,7 @@ class EmployeesController {
         ]
       );
 
-      await pool.query(
+      await client.query(
         `UPDATE registration_address 
          SET region = $1, locality = $2, street = $3, house = $4, building = $5, apartament = $6, update_at = NOW()
          WHERE id = $7`,
@@ -201,7 +195,7 @@ class EmployeesController {
           id_registration_adress,
         ]
       );
-      const employees = await pool.query(
+      const employees = await client.query(
         "UPDATE employees set first_name = $1, name = $2, patronymic = $3, date_of_birth = $4, id_passport_data = $5, id_registration_adress = $6, update_at = NOW() WHERE id = $7",
         [
           first_name,
@@ -211,59 +205,75 @@ class EmployeesController {
           id_passport_data,
           id_registration_adress,
           id,
-          id_employees
+          id_employees,
         ]
       );
       const id_employees = employees.rows[0].id;
-      const file_path = req.body.file_path; 
-      await pool.query (
+      const file_path = req.body.file_path;
+      await client.query(
         "UPDATE files set id_employees = $1, name =$2, file_path = $3 where id = $4",
-        [
-          id_employees,
-          name,
-          file_path,
-          id
+        [id_employees, name, file_path, id]
+      );
+      await client.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
         ]
       );
+      await client.query("COMMIT");
 
       if (employeesResult.rowCount === 0) {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
-      res.json({ employee: employeesResult.rows[0] });
+      res.status(201).json({ employee: employeesResult.rows[0] });
     } catch (err) {
+      await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
     }
   }
   //DELETE
   async deleteEmployees(req, res) {
     const id = req.params.id;
+    const client = await pool.connect();
     try {
-      await pool.query(
+      await client.query("BEGIN");
+      await client.query(
         `UPDATE files SET delete_at = NOW() WHERE id_employees = $1`,
         [id]
       );
-      const employeesResult = await pool.query(
+      const employeesResult = await client.query(
         `UPDATE employees SET delete_at = NOW() WHERE id = $1`,
         [id]
       );
       if (employeesResult.rowCount === 0) {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
-      await pool.query(
+      await client.query(
         `UPDATE passport_data
         SET delete_at = NOW()
         WHERE id = $1`,
         [id_passport_data]
       );
-      await pool.query(
+      await client.query(
         `UPDATE registration_adress
         SET delete_at - NOW()
         WHERE id = $1`,
         [id_registration_adress]
       );
-      res.json({ messege: "Сотрудник удален" });
+
+      await client.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, delete_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
+        ]
+      );
+      await client.query("COMMIT");
+      res.status(201).json({ messege: "Сотрудник удален" });
     } catch (err) {
+      await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
     }
   }
 }
