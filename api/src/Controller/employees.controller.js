@@ -10,6 +10,7 @@ class EmployeesController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+    const client = await pool.connect();
     const {
       first_name,
       name,
@@ -19,7 +20,8 @@ class EmployeesController {
       registrationAdress,
     } = req.body;
     try {
-      const passportResult = await pool.query(
+      await client.query('BEGIN');
+      const passportResult = await client.query(
         "INSERT INTO passport_data (series, number, date_of_issue, unit_code, issued_by_whom, create_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id",
         [
           passportData.series,
@@ -33,7 +35,7 @@ class EmployeesController {
       // Получаем идентификатор новосозданного паспорта
       const id_passport_data = passportResult.rows[0].id;
 
-      const adressResult = await pool.query(
+      const adressResult = await client.query(
         `INSERT INTO registration_adress (region, locality, street, house, building, apartament, create_at) 
          VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING id`,
         [
@@ -49,7 +51,7 @@ class EmployeesController {
       // Получаем идентификатор новосозданного адреса
       const id_registration_adress = adressResult.rows[0].id;
 
-      const new_employees = await pool.query(
+      const new_employees = await client.query(
         "INSERT INTO employees (first_name, name, patronymic, date_of_birth, id_passport_data, id_registration_adress, create_at) values ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING id",
         [
           first_name,
@@ -64,7 +66,7 @@ class EmployeesController {
       const id_employees = new_employees.rows[0].id;
 
       const file_path = req.body.file_path; 
-      await pool.query(
+      await client.query(
         `INSERT INTO files (id_employees, name, file_path)
         VALUES ($1, $2, $3)`,
         [
@@ -75,14 +77,18 @@ class EmployeesController {
       );
 
 
-      await pool.query(
+      await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
           (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
         ]
       );
+      await client.query ('COMMIT');
       res.status(201).json(new_employees.rows[0]);
     } catch (err) {
+      await client.query ('RPLLBACK');
       res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
     }
   }
   //GET
@@ -104,7 +110,8 @@ class EmployeesController {
         files *
     FROM employees e
     LEFT JOIN passport_data p ON e.id_passport_data = p.id
-    LEFT JOIN registration_adress r ON e.id_registration_adress = r.id`);
+    LEFT JOIN registration_adress r ON e.id_registration_adress = r.id 
+    WHERE delete_at = NULL`);
       res.json(employees.rows);
     } catch (err) {
       res.status(500).json({ error: err.message });

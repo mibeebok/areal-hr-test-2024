@@ -4,32 +4,38 @@ import {createPositionsSchema, getOnePositionsSchema, updatePositionsSchema} fro
 
 //Position
 class PositionController {
-  //CREATEA
+  //CREATE
   async createPositions(req, res) {
     const { error } = createPositionsSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+    const client = await pool.connect();
     const { name } = req.body;
     try {
-      const new_position = await pool.query(
+      await client.query('BEGIN');
+      const new_position = await client.query(
         "INSERT INTO positions (name, create_at) values ($1, NOW()) RETURNING *",
         [name]
       );
-      const positionHistory = await pool.query(
+      await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
           (req.user.id, "Должность", JSON.stringify(result.rows[0]))
         ]
       );
-      res.json(new_position.rows[0]);
+      await client.query ('COMMIT')
+      res.status(201).json(new_position.rows[0]);
     } catch (err) {
+      await client.query ('ROLLBACK');
       res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
     }
   }
   //GET
   async getPositions(req, res) {
     try {
-      const positions = await pool.query("SELECT * FROM positions");
+      const positions = await pool.query("SELECT * FROM positions WHERE delete_at = NULL");
       res.json(positions.rows[0]);
     } catch (err) {
       res.status(500).json({ error: err.message });

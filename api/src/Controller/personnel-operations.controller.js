@@ -10,6 +10,7 @@ class PersonnelOperationsController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+    const client = await pool.connect();
     const {
       id_employee,
       id_department,
@@ -19,7 +20,8 @@ class PersonnelOperationsController {
       dismissal_from_work,
     } = req.body;
     try {
-      const new_personnel_operations = await pool.query(
+      await client.query ('BEGIN');
+      const new_personnel_operations = await client.query(
         "INSERT INTO personnel_operations (id_employee, id_department, id_position, setting_the_salary, salary_change, dismissal_from_work, create_at) values ($1, $2, $3, $4, $5, false, NOW()) RETURNING *",
         [
           id_employee,
@@ -30,15 +32,19 @@ class PersonnelOperationsController {
           dismissal_from_work,
         ]
       );
-      const operationHistory = await pool.query(
+      await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
           (req.user.id, "Кадровые операции", JSON.stringify(result.rows[0]))
         ]
       );
 
-      res.json(new_personnel_operations.rows[0]);
+      await client.query ('COMMIT');
+      res.status(201).json(new_personnel_operations.rows[0]);
     } catch (err) {
+      await client.query ('ROLLBACK')
       res.status(500).json({ error: err.message });
+    } finally {
+      client.release();
     }
   }
   //GET

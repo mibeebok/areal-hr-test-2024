@@ -10,27 +10,31 @@ class OrganizationController {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+    const client = await pool.connect();
     const { name, comment} = req.body;
-    try {
-      const organizations = await pool.query(
-        "INSERT INTO organizations (name, comment, create_at) values ($1, $2. NOW()) RETURNING *",
+    try{
+      await client.query('BEGIN');
+      const result = await client.query (
+        "INSERT INTO organizations (name, comment, create_at) VALUES ($1, $2, NOW()) RETURNING*",
         [name, comment]
       );
-      const organizationHistory = await pool.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Организация", JSON.stringify(result.rows[0]))
-        ]
+      await client.query (
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_change_it, the_object_of_operation, changed_fields, create_at) VALUES ($1, $2, $3, NOW())",
+        [req.user.id, "Организация", JSON.stringify(result.rows[0])]
       );
-
-      res.json(organizations.rows);
+      await client.query ('COMMIT');
+      res.status(201).json(result.rows[0]);
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      await client.query('ROLLBACK');
+      res.status (500).json({error: err.message });
+    } finally {
+      client.release();
     }
   }
   //GET
   async getOrganization(req, res) {
     try {
-      const organizations = await pool.query("SELECT * FROM organizations");
+      const organizations = await pool.query("SELECT * FROM organizations WHERE delete_at = NULL");
       res.json(organizations.rows);
     } catch (err) {
       res.status(500).json({ error: err.message });

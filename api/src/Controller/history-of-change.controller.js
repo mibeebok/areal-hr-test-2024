@@ -9,7 +9,7 @@ class HistoryOfChangeController {
   async getHistoryOfChange(req, res) {
     try {
       const history_of_changes = await pool.query(
-        "SELECT * FROM history_of_change"
+        "SELECT * FROM history_of_change WHERE delete_at = NULL"
       );
       res.json(history_of_changes.rows);
     } catch (err) {
