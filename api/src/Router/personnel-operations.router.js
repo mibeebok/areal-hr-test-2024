@@ -1,6 +1,6 @@
 const Router = require("express");
 const router = new Router();
-const personnel_operations_controller = require("../Controller/personnel-operations.controller");
+const personnelOperationsController = require("../Controller/personnel-operations.controller");
 
 router.get("/", (req, res) => {
   res.send("Welcome to the Personnel operations API");
@@ -9,27 +9,27 @@ router.get("/", (req, res) => {
 //Personnel operations
 router.post(
   "/personnel_operations",
-  personnel_operations_controller.createPersonnelOperations
+  personnelOperationsController.createPersonnelOperations
 );
 router.get(
   "/personnel_operations",
-  personnel_operations_controller.getPersonnelOperations
+  personnelOperationsController.getPersonnelOperations
 );
 router.get(
   "/personnel_operations/:id",
-  personnel_operations_controller.getOnePersonnelOperations
+  personnelOperationsController.getOnePersonnelOperations
 );
 router.put(
-  "/personnel_operations",
-  personnel_operations_controller.updatePersonnelOperations
+  "/personnel_operations/:id",
+  personnelOperationsController.updatePersonnelOperations
 );
 router.get(
   "/personnel_operations/:id",
-  personnel_operations_controller.deletePersonnelOperations
+  personnelOperationsController.deletePersonnelOperations
 );
 router.patch(
   "/personnel_operations/:id",
-  personnel_operations_controller.softDeleteEmployees
+  personnelOperationsController.softDeleteEmployees
 );
 
 module.exports = router;

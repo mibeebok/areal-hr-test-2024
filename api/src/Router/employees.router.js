@@ -1,16 +1,16 @@
 const Router = require("express");
 const router = new Router();
-const employees_controller = require("../Controller/employees.controller");
+const employeesController = require("../Controller/employees.controller");
 
 router.get("/", (req, res) => {
   res.send("Welcome to the Employees API");
 });
 
 //Employees
-router.post("/employees", employees_controller.createEmployees);
-router.get("/employees", employees_controller.getEmployees);
-router.get("/employees/:id", employees_controller.getOneEmployees);
-router.put("/employees", employees_controller.updateEmployees);
-router.get("/employees/:id", employees_controller.deleteEmployees);
+router.post("/employees", employeesController.createEmployees);
+router.get("/employees", employeesController.getEmployees);
+router.get("/employees/:id", employeesController.getOneEmployees);
+router.put("/employees/:id", employeesController.updateEmployees);
+router.get("/employees/:id", employeesController.deleteEmployees);
 
 module.exports = router;

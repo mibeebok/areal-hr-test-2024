@@ -1,5 +1,8 @@
-import Joi from "joi"
+const Joi = require ("joi");
 
-  export const getOneHistoryOfChangeSchema = Joi.object({
+  const getOneHistoryOfChangeSchema = Joi.object({
     id: Joi.number().integer().required(),
   });
+  module.exports = {
+    getOneHistoryOfChangeSchema,
+  }

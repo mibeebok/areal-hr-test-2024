@@ -1,10 +1,10 @@
 const pool = require("../db/db.client");
 
-import {
+const {
   createDepartmentSchema,
   getOneDepartmentsSchema,
   updateDepartmentSchema,
-} from "./dto/daperment.dto";
+} = require ("./dto/daperment.dto");
 
 //Department
 class DepartmentController {
@@ -40,7 +40,7 @@ class DepartmentController {
   async getDepartments(req, res) {
     try {
       const departments = await pool.query(
-        "SELECT * FROM departments WHERE delete_at = NULL"
+        "SELECT * FROM departments WHERE deleted_at = NULL"
       );
       res.json(departments.rows);
     } catch (err) {
@@ -56,7 +56,7 @@ class DepartmentController {
     const id = req.params.id;
     try {
       const departments = await pool.query(
-        "SELECT * FROM departments WHERE id = $1"[id]
+        "SELECT * FROM departments WHERE id is 1",[id]
       );
       if (departments.rows.length > 0) {
         res.json(departments.rows[0]);
@@ -69,30 +69,29 @@ class DepartmentController {
   }
   //UPDATE
   async updateDepartments(req, res) {
+    const {id} = req.params;
     const { error } = updateDepartmentSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     const client = await pool.connect();
-    const { id_organization, name, parent, comment, id } = req.body;
+    const { id_organization, name, parent, comment } = req.body;
     try {
       await client.query("BEGIN");
       const departments = await client.query(
         "UPDATE departments SET id_organization = $1, parent = $2, name = $3, comment = $4, update_at = NOW() WHERE id = $5 RETURNING *",
         [id_organization, parent, name, comment, id]
       );
+      if (departments.rowCount === 0) {
+        return res.status(404).json({ message: "Отдел не найден" });
+      }
 
       await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Отдел", JSON.stringify(result.rows[0]))
+          req.user.specialistId, "Отдел", JSON.stringify(result.rows[0])
         ]
       );
       await client.query("COMMIT");
-      if (departments.rows.length > 0) {
-        res.status(201).json(departments.rows[0]);
-      } else {
-        res.status(404).json({ message: "Отдел не найден" });
-      }
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });
@@ -107,19 +106,18 @@ class DepartmentController {
     try {
       await client.query("BEGIN");
       const departments = await client.query(
-        "UPDATE FROM departments SET delete_at = NOW() WHERE id = $1"[id]
+        "UPDATE departments SET deleted_at = NOW() WHERE id = $1 RETIRNUNG *",[id]
       );
+      if (departments.rowCount === 0) {
+        return res.status(404).json({ message: "Отдел не найден" });
+      }
+
       await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, delete_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Отдел", JSON.stringify(result.rows[0]))
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, deleted_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          req.user.id, "Отдел", JSON.stringify(departments.rows[0])
         ]
       );
       await client.query("COMMIT");
-      if (departments.rows.length > 0) {
-        res.status(201).json(departments.rows[0]);
-      } else {
-        res.status(404).json({ message: "Отдел не найден" });
-      }
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });

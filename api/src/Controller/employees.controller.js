@@ -1,10 +1,10 @@
 const pool = require("../db/db.client");
 
-import {
+const {
   createEmployeesSchema,
   getOneEmployeesSchema,
   updateEmployeesSchema,
-} from "./dto/employees.dto";
+} = require ("./dto/employees.dto");
 
 //Employees
 class EmployeesController {
@@ -77,7 +77,7 @@ class EmployeesController {
       );
       await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
+          (req.user.specialistId, "Сотрудники", JSON.stringify(new_employees.rows[0]))
         ]
       );
       await client.query("COMMIT");
@@ -109,7 +109,7 @@ class EmployeesController {
     FROM employees e
     LEFT JOIN passport_data p ON e.id_passport_data = p.id
     LEFT JOIN registration_adress r ON e.id_registration_adress = r.id 
-    WHERE delete_at = NULL`);
+    WHERE deleted_at is NULL`);
       res.json(employees.rows);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -216,7 +216,7 @@ class EmployeesController {
       );
       await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
+          (req.user.specialistId, "Сотрудники", JSON.stringify(new_employees.rows[0]))
         ]
       );
       await client.query("COMMIT");
@@ -224,7 +224,7 @@ class EmployeesController {
       if (employeesResult.rowCount === 0) {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
-      res.status(201).json({ employee: employeesResult.rows[0] });
+      res.status(200).json({ employee: employeesResult.rows[0] });
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });
@@ -239,11 +239,11 @@ class EmployeesController {
     try {
       await client.query("BEGIN");
       await client.query(
-        `UPDATE files SET delete_at = NOW() WHERE id_employees = $1`,
+        `UPDATE files SET deleted_at = NOW() WHERE id_employees = $1`,
         [id]
       );
       const employeesResult = await client.query(
-        `UPDATE employees SET delete_at = NOW() WHERE id = $1`,
+        `UPDATE employees SET deleted_at = NOW() WHERE id = $1`,
         [id]
       );
       if (employeesResult.rowCount === 0) {
@@ -251,24 +251,24 @@ class EmployeesController {
       }
       await client.query(
         `UPDATE passport_data
-        SET delete_at = NOW()
+        SET deleted_at = NOW()
         WHERE id = $1`,
         [id_passport_data]
       );
       await client.query(
         `UPDATE registration_adress
-        SET delete_at - NOW()
+        SET deleted_at - NOW()
         WHERE id = $1`,
         [id_registration_adress]
       );
 
       await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, delete_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Сотрудники", JSON.stringify(new_employees.rows[0]))
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, deleted_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.specialistId, "Сотрудники", JSON.stringify(new_employees.rows[0]))
         ]
       );
       await client.query("COMMIT");
-      res.status(201).json({ messege: "Сотрудник удален" });
+      res.status(200).json({ messege: "Сотрудник удален" });
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });

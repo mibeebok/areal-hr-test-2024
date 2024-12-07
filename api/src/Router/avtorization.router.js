@@ -1,11 +1,11 @@
 const Router = require("express");
 const router = new Router();
-const avtorizaton_controller = require("../Controller/avtorization.controller");
+const avtorizatonController = require("../Controller/avtorization.controller");
 
 router.get("/", (req, res) => {
     res.send("Welcome to the Avtorization API");
   });
 
-  router.post("/login", avtorizaton_controller.login)
+  router.post("/login", avtorizatonController.login)
 
   module.exports = router;

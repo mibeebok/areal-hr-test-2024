@@ -1,16 +1,16 @@
 const Router = require("express");
 const router = new Router();
-const department_controller = require("../Controller/department.controller");
+const departmentController = require("../Controller/department.controller");
 
 router.get("/", (req, res) => {
   res.send("Welcome to the Departments API");
 });
 
 //Department
-router.post("/departments", department_controller.createDepartments);
-router.get("/departments", department_controller.getDepartments);
-router.get("/departments/:id", department_controller.getOneDepartments);
-router.put("/departments", department_controller.updateDepartments);
-router.get("/departments/:id", department_controller.deleteDepartments);
+router.post("/departments", departmentController.createDepartments);
+router.get("/departments", departmentController.getDepartments);
+router.get("/departments/:id", departmentController.getOneDepartments);
+router.put("/departments/:id", departmentController.updateDepartments);
+router.get("/departments/:id", departmentController.deleteDepartments);
 
 module.exports = router;

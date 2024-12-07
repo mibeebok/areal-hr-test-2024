@@ -1,6 +1,6 @@
-import Joi from "joi"
+const Joi = require ("joi");
 
-export const createPersonnelOperationsSchema = Joi.object({
+const createPersonnelOperationsSchema = Joi.object({
     id_employee: Joi.number().integer().required(),
     id_department: Joi.number().integer().required(),
     id_position: Joi.number().integer().required(),
@@ -8,10 +8,10 @@ export const createPersonnelOperationsSchema = Joi.object({
     salary_change: Joi.number().integer().allow(""),
     dismissal_from_work: Joi.boolean().required(),
   });
- export const getOnePersonnelOperationsSchema = Joi.object({
+ const getOnePersonnelOperationsSchema = Joi.object({
     id: Joi.number().integer().required(),
   });
- export const updatePersonnelOperationsSchema = Joi.object({
+ const updatePersonnelOperationsSchema = Joi.object({
     id_employee: Joi.number().integer().required(),
     id_department: Joi.number().integer().required(),
     id_position: Joi.number().integer().required(),
@@ -20,4 +20,9 @@ export const createPersonnelOperationsSchema = Joi.object({
     dismissal_from_work: Joi.boolean().required(),
     id: Joi.number().integer().required(),
   });
+  module.exports = {
+    createPersonnelOperationsSchema,
+    getOnePersonnelOperationsSchema,
+    updatePersonnelOperationsSchema,
+  }
   

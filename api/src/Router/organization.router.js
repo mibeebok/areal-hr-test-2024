@@ -1,16 +1,17 @@
 const Router = require("express");
 const router = new Router();
-const organization_controller = require("../Controller/organization.controller");
+const organizationController = require("../Controller/organization.controller.js");
+
 
 router.get("/", (req, res) => {
   res.send("Welcome to the Organizations API");
 });
 
 //Organization
-router.post("/organization", organization_controller.createOrganization);
-router.get("/organization", organization_controller.getOrganization);
-router.get("/organization/:id", organization_controller.getOneOrganization);
-router.put("/organization", organization_controller.updateOrganization);
-router.get("/organization/:id", organization_controller.deleteOrganization);
+router.post("/organization", organizationController.createOrganization);
+router.get("/organization", organizationController.getOrganization);
+router.get("/organization/:id", organizationController.getOneOrganization);
+router.put("/organization/:id", organizationController.updateOrganization);
+router.get("/organization/:id", organizationController.deleteOrganization);
 
 module.exports = router;

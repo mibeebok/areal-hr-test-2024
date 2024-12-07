@@ -1,10 +1,10 @@
 const pool = require("../db/db.client");
 
-import {
+const {
   createPositionsSchema,
   getOnePositionsSchema,
   updatePositionsSchema,
-} from "./dto/position.dto";
+} = require ("./dto/position.dto");
 
 //Position
 class PositionController {
@@ -24,7 +24,7 @@ class PositionController {
       );
       await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Должность", JSON.stringify(result.rows[0]))
+          (req.user.specialistId, "Должность", JSON.stringify(result.rows[0]))
         ]
       );
       await client.query("COMMIT");
@@ -40,7 +40,7 @@ class PositionController {
   async getPositions(req, res) {
     try {
       const positions = await pool.query(
-        "SELECT * FROM positions WHERE delete_at = NULL"
+        "SELECT * FROM positions WHERE deleted_at is NULL"
       );
       res.json(positions.rows[0]);
     } catch (err) {
@@ -69,29 +69,29 @@ class PositionController {
   }
   //UPDATE
   async updatePositions(req, res) {
+    const {id} = req.params;
     const { error } = updatePositionsSchema.validate(req, body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     const client = await pool.connect();
-    const { id, name } = req.body;
+    const { name } = req.body;
     try {
       await client.query("BEGIN");
       const positions = await client.query(
         "UPDATE positions SET name = $1, update_at = NOW() WHERE id = $2 RETURNING *",
         [name, id]
       );
+      if (positions.rows.length > 0) {
+        return res.status(404).json({ message: "Должность не найдена" });
+      }
+
       await client.query(
         "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Должность", JSON.stringify(result.rows[0]))
+          (req.user.specialistId, "Должность", JSON.stringify(result.rows[0]))
         ]
       );
       await client.query("COMMIT");
-      if (positions.rows.length > 0) {
-        res.status(201).json(positions.rows);
-      } else {
-        res.status(404).json({ message: "Должность не найдена" });
-      }
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });
@@ -106,19 +106,18 @@ class PositionController {
     try {
       await client.query("BEGIN");
       const positions = await client.query(
-        "UPDATE FROM positions SET delete_at = NOW() WHERE id = $1"[id]
+        "UPDATE FROM positions SET deleted_at = NOW() WHERE id = $1"[id]
       );
+      if (positions.rows.length > 0) {
+        return res.status(404).json({ message: "Должность не найдена" });
+      }
+
       await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, delete_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.id, "Должность", JSON.stringify(result.rows[0]))
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, deleted_at) VALUES (NOW(), $1, $2, $3, NOW())"[
+          (req.user.specialistId, "Должность", JSON.stringify(result.rows[0]))
         ]
       );
       await client.query("COMMIT");
-      if (positions.rows.length > 0) {
-        res.status(201).json(positions.rows);
-      } else {
-        res.status(404).json({ message: "Должность не найдена" });
-      }
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });

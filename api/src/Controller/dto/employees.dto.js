@@ -1,6 +1,6 @@
-import Joi from "joi"
+const Joi = require ("joi");
 
-export const createEmployeesSchema = Joi.object({
+const createEmployeesSchema = Joi.object({
     first_name: Joi.string().alphanum().min(5).max(100).required(),
     name: Joi.string().alphanum().min(3).max(100).required(),
     patronymic: Joi.string().alphanum().min(5).max(100).required(),
@@ -8,10 +8,10 @@ export const createEmployeesSchema = Joi.object({
     id_passport_data: Joi.number().integer().required(),
     id_registration_address: Joi.number().integer().required(),
   });
-export  const getOneEmployeesSchema = Joi.object({
+const getOneEmployeesSchema = Joi.object({
     id: Joi.number().integer().required(),
   });
-export  const updateEmployeesSchema = Joi.object({
+const updateEmployeesSchema = Joi.object({
     first_name: Joi.string().alphanum().min(5).max(100).required(),
     name: Joi.string().alphanum().min(3).max(100).required(),
     patronymic: Joi.string().alphanum().min(5).max(100).required(),
@@ -20,4 +20,10 @@ export  const updateEmployeesSchema = Joi.object({
     id_registration_address: Joi.number().integer().required(),
     id: Joi.number().integer().required(),
   });
+
+  module.exports = {
+    createEmployeesSchema, 
+    getOneEmployeesSchema, 
+    updateEmployeesSchema,
+  }
   

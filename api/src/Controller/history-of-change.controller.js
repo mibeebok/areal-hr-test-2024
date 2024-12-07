@@ -1,6 +1,6 @@
 const pool = require("../db/db.client");
 
-import { getOneHistoryOfChangeSchema } from "./dto/history-of-change.dto";
+const { getOneHistoryOfChangeSchema } = require ("./dto/history-of-change.dto");
 
 //History of change
 class HistoryOfChangeController {
@@ -8,7 +8,7 @@ class HistoryOfChangeController {
   async getHistoryOfChange(req, res) {
     try {
       const history_of_changes = await pool.query(
-        "SELECT * FROM history_of_change WHERE delete_at = NULL"
+        "SELECT * FROM history_of_change WHERE deleted_at = NULL"
       );
       res.json(history_of_changes.rows);
     } catch (err) {

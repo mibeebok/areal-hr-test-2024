@@ -13,6 +13,11 @@ exports.up = (pgm) => {
     id: { type: "serial", primaryKey: true },
     caption: { type: "varchar (100)", notNull: true },
   });
+  //справочник ролей по умолчанию
+  pgm.insert("roles", ["caption"], [
+    ["administration"],
+    ["hr-specialist"],
+  ]);
 };
 
 /**
