@@ -20,7 +20,6 @@ export default {
   data() {
     return {
       name: "",
-      create_at: new Date(),
       message: "",
     };
   },
@@ -31,12 +30,10 @@ export default {
           "http://localhost:8081/Pos/position",
           {
             name: this.name,
-            create_at: new Date(),
           }
         );
         this.message = response.dara;
         this.name = "";
-        this.create_at = new Date();
       } catch (error) {
         this.message = "Error create new position";
       }

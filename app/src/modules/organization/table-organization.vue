@@ -21,9 +21,13 @@
     </div>
     <div class="button-container">
     <div class="button">
-
     <button @click="showFormCreateOrg = !showFormCreateOrg">
       {{ showFormCreateOrg ? 'Скрыть форму добавления' : 'Добавить запись' }}
+    </button>
+    </div>
+    <div class="button">
+    <button @click="showFormUpdateOrg = !showFormUpdateOrg">
+      {{ showFormUpdateOrg ? 'Скрыть форму редактирования' : 'Редактировать запись' }}
     </button>
     </div>
     <div class="button">
@@ -38,14 +42,17 @@
     </div>
   </div>
     <createOrganization v-if="showFormCreateOrg" />
+    <updateOrganizaiton v-if="showFormUpdateOrg"/>
 </template>
 <script>
 import axios from 'axios'
 import createOrganization from './create-organization.vue';
+import updateOrganizaiton from "./edit-organizations.vue";
 export default{
     name: 'TableOrganization',
     components:{
-      createOrganization
+      createOrganization,
+      updateOrganizaiton,
     },
     data(){
         return{

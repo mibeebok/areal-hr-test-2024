@@ -1,8 +1,13 @@
 <template>
-  <form @submit.prevent="createDepartment">
-    <div class="container2">
-      <div class="container1">
-        <h2>Добавление нового отедла</h2>
+  <div class="container2">
+    <div class="container1">
+      <h2>Редактирование записи отедла</h2>
+      <h3>Введите код записи, которую хотите редактировать</h3>
+      <form @submit.prevent="updateDepartment">
+        <div class="container2">
+          <label for="id">Код записи: </label>
+          <input type="text" id="id" v-model="id" required />
+        </div>
         <div class="container2">
           <label for="orgCode">Код организации: </label>
           <input
@@ -30,11 +35,11 @@
           <label for="comment">Комментарий: </label>
           <textarea id="comment" v-model="comment" required></textarea>
         </div>
-        <button type="submit">Сохранить</button>
-        <p v-if="message">{{ message }}</p>
-      </div>
+      </form>
     </div>
-  </form>
+    <button @click="updateDepartment">Сохранить</button>
+    <p v-if="message">{{ message }}</p>
+  </div>
 </template>
 <script>
 import OrganizationList from "../organization/organization-list.vue";
@@ -44,15 +49,19 @@ export default {
   components: {
     OrganizationList,
   },
+  props: {
+    department: Object,
+  },
   data() {
     return {
-      orgCode: "",
-      parent: "",
-      name: "",
-      comment: "",
-      message: "",
-      showOrgList: false,
-      organizations: [],
+    id: this.department ? this.department.id : "",
+    orgCode: this.department ? this.department.id_organization : "",
+    parent: this.department ? this.department.parent : "",
+    name: this.department ? this.department.name : "",
+    comment: this.department ? this.department.comment : "",
+    message: "",
+    showOrgList: false,
+    organizations: [],
     };
   },
   mounted() {
@@ -71,29 +80,31 @@ export default {
     },
     selectOrganization(org) {
       this.orgCode = org.code;
-      this.showOrgList = false; // Скрыть список после выбора
+      this.showOrgList = false; 
     },
     hideOrgList() {
-      this.showOrgList = false; // Скрыть список при потере фокуса
+      this.showOrgList = false; 
     },
-    async createDepartment() {
+    async updateDepartment() {
       try {
-        const response = await axios.post(
-          "http://localhost:8081/Dep/departments",
+        await axios.put(
+          "http://localhost:8081/Dep/departments/${this.id}",
           {
-            orgCode: this.orgCode,
+            id_organization: this.orgCode,
             parent: this.parent,
             name: this.name,
             comment: this.comment,
           }
         );
-        this.message = response.data;
+        this.message = "Запись успешно обновлена!";
+        this.id = "";
         this.orgCode = "";
         this.parent = "";
         this.name = "";
         this.comment = "";
       } catch (error) {
-        this.message = "Ошибка при добавлении";
+        this.message =
+          "Ошибка при обновлении записи: " + error.response.data.error;
       }
     },
   },

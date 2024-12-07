@@ -86,10 +86,37 @@
       </div>
     </div>
 
+    <div class="container2">
+    <p class="title2">Файлы</p>
+    <div class="parent-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Номер записи</th>
+            <th>Код сотрудника</th>
+            <th>Название</th>
+            <th>Путь</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="filesItem in filesItems" :key="filesItem.id">
+            <td>{{ filesItem.id }}</td>
+            <td>{{ filesItem.id_employees }}</td>
+            <td>{{ filesItem.name }}</td>
+            <td>{{ filesItem.file_path }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
     <div class="button-container">
     <div class="button">
       <button @click="showFormCerateEmpl = !showFormCerateEmpl">
         {{showFormCerateEmpl ? 'Скрыть форму добавления' : 'Добавить запись'}}</button>
+    </div>
+    <div class="button">
+      <button @click="showFormUpdateEmpl = !showFormUpdateEmpl">
+        {{showFormUpdateEmpl ? 'Скрыть форму зедактирования' : 'Редактировать запись'}}</button>
     </div>
     <div class="button">
       <button @click="deleteEmployees">Удалить запись</button>
@@ -98,27 +125,32 @@
       <button @click="getOneEmployees">Поиск записи</button>
     </div>
     <div class="button">
-      <button @click="updateEmployees">Обновить таблицу</button>
+      <button @click="updateEmployeess">Обновить таблицу</button>
     </div>
     </div>
   </div>
   <createEmployees v-if="showFormCerateEmpl"/>
+  <updateEmployees v-if="showFormUpdateEmpl"/>
 </template>
 <script>
 import axios from "axios";
 import createEmployees from "./create-employees.vue";
+import updateEmployees from "./edit-employees.vue";
 
 export default {
   name: "TableEmployee",
   components: {
-    createEmployees
+    createEmployees,
+    updateEmployees,
   },
   data() {
     return {
       showFormCerateEmpl: false,
+      showFormUpdateEmpl: false,
       items: [],
       passportItems: [],
       adressItems: [],
+      filesItems: [],
     };
   },
   mounted() {
@@ -131,6 +163,7 @@ export default {
         this.items = response.data.employees || [];
         this.passportItems = response.data.passports || [];
         this.adressItems = response.data.adresses || [];
+        this.filesItems = response.data.files || [];
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
@@ -157,7 +190,7 @@ export default {
         }
       }
     },
-    async updateEmployees () {
+    async updateEmployeess () {
       this.fetchData();
     }
   },

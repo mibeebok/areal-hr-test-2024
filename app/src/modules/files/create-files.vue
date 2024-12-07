@@ -45,7 +45,6 @@ export default {
       idEmpl: "",
       name: "",
       path: "",
-      create_at: new Date(),
       message: "",
       showEmplList: false,
       employees: [],
@@ -78,13 +77,11 @@ export default {
           idEmpl: this.idEmpl,
           name: this.name,
           path: this.path,
-          create_at: new Date(),
         });
         this.message = response.data;
         this.idEmpl = "";
         this.name = "";
         this.path = "";
-        this.create_at = new Date();
       } catch (errir) {
         this.message = "Error create";
       }

@@ -26,6 +26,13 @@
         </button>
       </div>
       <div class="button">
+        <button @click="showFormEditPos = !showFormEditPos">
+          {{
+            showFormEditPos ? "Скрыть форму редактирования" : "Редактировать запись"
+          }}
+        </button>
+      </div>
+      <div class="button">
         <button @click="deletePosition">Удалить запись</button>
       </div>
       <div class="button">
@@ -37,18 +44,22 @@
     </div>
   </div>
   <CreatePositions v-if="showFormCreatePos" />
+  <updatePositions v-if="showFormEditPos" />
 </template>
 <script>
 import axios from "axios";
 import CreatePositions from "./create-positions.vue";
+import updatePositions from "./edit-positions.vue";
 export default {
   name: "TablePosition",
   components: {
     CreatePositions,
+    updatePositions,
   },
   data() {
     return {
       showFormCreatePos: false,
+      showFormEditPos: false,
       items: [],
     };
   },

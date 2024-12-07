@@ -33,6 +33,11 @@
         {{ showFormCreateOper ? "Скрыть форму добавления" : "Добавить запись" }}
       </button>
     </div>
+    <div class="button">
+      <button @click="showFormEditOper = !showFormEditOper">
+        {{ showFormEditOper ? "Скрыть форму редактирования" : "Редактировать запись" }}
+      </button>
+    </div>
       <div class="button">
         <button @click="deleteOperation">Удалить запись</button>
       </div>
@@ -44,19 +49,28 @@
       </div>
     </div>
   </div>
+  <div>
   <CreatePersonnelOperations v-if="showFormCreateOper" />
+  </div>
+  <div>
+  <updatePersonnelOperations v-if="showFormEditOper" />
+  </div>
 </template>
 <script>
 import axios from "axios";
 import CreatePersonnelOperations from "./create-personnel-operations.vue";
+import updatePersonnelOperations from "./edit-personnel-operations.vue";
+
 export default {
   name: "TablePersonnelOperation",
   components: {
     CreatePersonnelOperations,
+    updatePersonnelOperations,
   },
   data() {
     return {
       showFormCreateOper: false,
+      showFormEditOper: false,
       items: [],
     };
   },

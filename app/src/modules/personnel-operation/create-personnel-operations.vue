@@ -91,7 +91,6 @@ export default {
       setSalary: "",
       changeSalary: "",
       dismissal: "",
-      create_at: new Date(),
       message: "",
       showEmplList: false,
       employees: [],
@@ -163,7 +162,6 @@ export default {
             setSalary: this.setSalary,
             changeSalary: this.changeSalary,
             dismissal: this.dismissal,
-            create_at: new Date(),
           }
         );
         this.message = response.data;
@@ -172,8 +170,7 @@ export default {
         this.idPos= "";
         this.setSalary="";
         this.changeSalary= "";
-        this.dismissal= "",
-        this.create_at = new Date();
+        this.dismissal= "";
       } catch (error) {
         this.message = "Ошибка при добавлении записи";
       }

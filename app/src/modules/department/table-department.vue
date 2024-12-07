@@ -30,6 +30,11 @@
       </button>
     </div>
     <div class="button">
+      <button @click="showFormUpdateDep = !showFormUpdateDep">
+        {{showFormUpdateDep ? 'Скрыть форму редактирования' : 'Редактировать запись'}}
+      </button>
+    </div>
+    <div class="button">
       <button @click="deleteDepartments">Удалить запись</button>
     </div>
     <div class="button">
@@ -40,20 +45,26 @@
     </div>
     </div>
   </div>
-  <createDepartment v-if="showFormCreateDep" />
+  <div>
+    <createDepartment v-if="showFormCreateDep" />
+    <updateDepartment v-if="showFormUpdateDep" />
+  </div>
 </template>
 <script>
 import axios from "axios";
 import createDepartment from "./create-department.vue";
+import updateDepartment from "./edit-department.vue";
 
 export default {
   name: "TableDepartment",
   components: {
-    createDepartment
+    createDepartment,
+    updateDepartment
   },
   data() {
     return {
       showFormCreateDep: false,
+      showFormUpdateDep: false,
       items: [],
     };
   },

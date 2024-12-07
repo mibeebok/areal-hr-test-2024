@@ -75,6 +75,23 @@
         </div>
       </form>
     </div>
+
+    <div class="container1">
+      <h2>Файлы (скан паспорта)</h2>
+      <div class="container2">
+          <label for="idEmpl">Код сотрудника : </label>
+          <input type="text" id="idEmpl" v-model="idEmpl" required/>
+        </div>
+        <div class="container2">
+          <label for="fileName">Название файла: </label>
+          <input type="text" id="fileName" v-model="fileName" required/>
+        </div>
+        <div class="container2">
+          <label for="path">Путь до файла</label>
+          <input type="text" id="path" v-model="path" required/>
+        </div>
+      </div>
+
     <button type="submit">Сохранить</button>
     <p v-if="message">{{ message }}</p>
   </div>
@@ -100,7 +117,9 @@ export default {
       house: "",
       building: "",
       apartment: "",
-      create_at: new Date(),
+      idEmpl: "",
+      fileName: "",
+      path: "",
       message: "",
     };
   },
@@ -125,7 +144,9 @@ export default {
             house: this.house,
             building: this.building,
             apartment: this.apartment,
-            create_at: new Date(),
+            idEmpl: this.idEmpl,
+            fileName: this.name,
+            path: this.path,
           }
         );
         this.message = response.data;
@@ -144,6 +165,9 @@ export default {
         this.house = "";
         this.building = "";
         this.apartment = "";
+        this.idEmpl = "";
+        this.fileName = "";
+        this.path = "";
       } catch (error) {
         this.message = "Error create for Employees";
       }

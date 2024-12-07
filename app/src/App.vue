@@ -20,9 +20,6 @@
         <button @click="setActiveComponent('employees')">СОТРУДНИКИ</button>
       </div>
       <div class="button">
-        <button @click="setActiveComponent('files')">ФАЙЛЫ</button>
-      </div>
-      <div class="button">
         <button @click="setActiveComponent('history_of_change')">
           ИСТОРИЯ ИЗМЕНЕНИЙ
         </button>
@@ -38,14 +35,14 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 
-import ModalAuth from './components/ModalAuth.vue'; // Импортируем компонент модального окна
+import ModalAuth from './components/ModalAuth.vue'; 
 
 
 import TableDepartment from "./modules/department/table-department.vue";
 import TableEmployee from "./modules/employees/table-employees.vue";
-import TableFiles from "./modules/files/table-files.vue";
 import TableHistoryOfChange from "./modules/history-of-change/table-history-of-change.vue";
 import TableOrganization from "./modules/organization/table-organization.vue";
 import TablePersonnelOperation from "./modules/personnel-operation/table-personnel-operations.vue";
@@ -57,7 +54,6 @@ export default {
     ModalAuth,
     TableDepartment,
     TableEmployee,
-    TableFiles,
     TableHistoryOfChange,
     TableOrganization,
     TablePersonnelOperation,
@@ -65,9 +61,19 @@ export default {
   },
   data() {
     return {
+      data: [],
       isAuthenticated: false, // Состояние аутентификации,
       activeComponent: null,
     };
+  },
+  async created() {
+    try {
+      const response = await
+      axios.get('http://localhost:8081');
+      this.data = response.data;
+    } catch (error){
+      console.error ('Error fetching: ', error);
+    }
   },
   methods: {
       handleAuthentication() {
@@ -86,9 +92,6 @@ export default {
           break;
         case "employees":
           this.activeComponent = TableEmployee;
-          break;
-        case "files":
-          this.activeComponent = TableFiles;
           break;
         case "history_of_change":
           this.activeComponent = TableHistoryOfChange;

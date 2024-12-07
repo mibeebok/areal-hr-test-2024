@@ -25,7 +25,6 @@ export default {
     return {
       name: "",
       comment: "",
-      create_at: new Date(),
       message: "",
     };
   },
@@ -37,13 +36,11 @@ export default {
           {
             name: this.name,
             comment: this.comment,
-            create_at: new Date(),
           }
         );
         this.message = response.data;
         this.name = "";
         this.comment = "";
-        this.create_at = new Date();
       } catch (error) {
         this.message = "Ошибка при добавлении записи";
       }
