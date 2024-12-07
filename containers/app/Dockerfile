@@ -1,5 +1,5 @@
 # Фронтенд (Vue.js)
-FROM node:14 AS build-stage
+FROM node:20.18.1 AS build-stage
 
 # Установка рабочей директории
 WORKDIR /app

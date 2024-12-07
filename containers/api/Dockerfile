@@ -1,5 +1,5 @@
 # Бэкенд (Node.js)
-FROM node:14
+FROM node:20.18.1
 
 # Установка рабочей директории
 WORKDIR /app
