@@ -21,14 +21,14 @@ class UserService {
 
         // Создаем запись в таблице avtorizations
         const avtorizationsRes = await this.pool.query(
-            'INSERT INTO avtorizations (login, password) VALUES (\$1, \$2) RETURNING id',
+            'INSERT INTO avtorizations (login, password) VALUES ($1, $2) RETURNING id',
             [email, hashedPassword]
         );
         const avtorizationsId = avtorizationsRes.rows[0].id;
 
         // Получаем роль "administration"
         const roleRes = await this.pool.query(
-            'SELECT id FROM roles WHERE caption = \$1',
+            'SELECT id FROM roles WHERE caption = $1',
             ['administration']
         );
         const roleId = roleRes.rows[0].id;
@@ -44,7 +44,7 @@ class UserService {
 
     async findByEmail(email) {
         const res = await this.pool.query(
-            'SELECT * FROM avtorizations WHERE login = \$1',
+            'SELECT * FROM avtorizations WHERE login = $1',
             [email]
         );
         return res.rows[0];

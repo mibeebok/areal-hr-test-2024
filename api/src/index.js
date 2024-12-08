@@ -5,8 +5,6 @@ const position_router = require("./Router/position.router");
 const employees_router = require("./Router/employees.router");
 const personnel_operations_router = require("./Router/personnel-operations.router");
 const history_of_change_router = require("./Router/history-of-change.router");
-const avtorization_router = require("./Router/avtorization.router");
-const authentication_router = require("./Router/authentication.router");
 const {UserService} = require ("./User/user.service");
 const user_router = require ("./Router/specialist.router");
 
@@ -40,8 +38,6 @@ app.use("/Pos", position_router);
 app.use("/Empl", employees_router);
 app.use("/PerOP", personnel_operations_router);
 app.use("/His", history_of_change_router);
-app.use("/Avt", avtorization_router);
-app.use("/Auth", authentication_router);
 app.use("/User", user_router);
 
 app.listen(PORT, "0.0.0.0", () =>
