@@ -89,6 +89,7 @@ body {
     font-weight: light;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin: 5px; /* Расстояние между кнопками */
   }
   
   .button-container {
@@ -100,7 +101,6 @@ body {
   }
   
   .button {
-    margin: 5px; /* Расстояние между кнопками */
     padding: 2px 0; /* Внутренний отступ для кнопок */
   }
   

@@ -7,12 +7,28 @@ const personnel_operations_router = require("./Router/personnel-operations.route
 const history_of_change_router = require("./Router/history-of-change.router");
 const avtorization_router = require("./Router/avtorization.router");
 const authentication_router = require("./Router/authentication.router");
+const {UserService} = require ("./User/user.service");
+const user_router = require ("./Router/specialist.router");
 
 const PORT = process.env.PORT || 8081;
 
 const app = express();
 
 app.use(express.json());
+
+const userService = new UserService();
+
+async function initializeAdmin() {
+    try {
+        await userService.initializeAdminUser ();
+        console.log('Admin user initialization complete.');
+    } catch (error) {
+        console.error('Error initializing admin user:', error);
+    }
+}
+
+
+initializeAdmin();
 
 app.get("/", (req, res) => {
   res.send("Welcome to the API");
@@ -26,6 +42,7 @@ app.use("/PerOP", personnel_operations_router);
 app.use("/His", history_of_change_router);
 app.use("/Avt", avtorization_router);
 app.use("/Auth", authentication_router);
+app.use("/User", user_router);
 
 app.listen(PORT, "0.0.0.0", () =>
   console.log(`server started on post ${PORT}`)
