@@ -71,10 +71,10 @@ export default {
     },
     selectOrganization(org) {
       this.orgCode = org.code;
-      this.showOrgList = false; // Скрыть список после выбора
+      this.showOrgList = false; 
     },
     hideOrgList() {
-      this.showOrgList = false; // Скрыть список при потере фокуса
+      this.showOrgList = false; 
     },
     async createDepartment() {
       try {

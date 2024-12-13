@@ -4,7 +4,7 @@ const {
   createPersonnelOperationsSchema,
   getOnePersonnelOperationsSchema,
   updatePersonnelOperationsSchema,
-} = require ("./dto/personnel-operations.dto");
+} = require("./dto/personnel-operations.dto");
 
 //Personnel operations
 class PersonnelOperationsController {
@@ -34,11 +34,6 @@ class PersonnelOperationsController {
           setting_the_salary,
           salary_change,
           dismissal_from_work,
-        ]
-      );
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Кадровые операции", JSON.stringify(result.rows[0]))
         ]
       );
 
@@ -84,7 +79,7 @@ class PersonnelOperationsController {
   }
   //UPDATE
   async updatePersonnelOperations(req, res) {
-    const {id} = req.params;
+    const { id } = req.params;
     const { error } = updatePersonnelOperationsSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
@@ -98,8 +93,16 @@ class PersonnelOperationsController {
       salary_change,
       dismissal_from_work,
     } = req.body;
+    let oldVersion;
     try {
       await client.query("BEGIN");
+      await client.query("SELECT * FROM personnel_operations WHERE id = $1", [
+        id,
+      ]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "" });
+      }
+      oldVersion = result.rows[0];
       const personnel_operations = await client.query(
         "UPDATE personnel_operations SET id_employee = $1, id_department = $2, id_position =$3, setting_the_salary = $4, salary_change = $5, dismissal_from_work = $6, update_at = NOW() WHERE id = $7 RETURNING *",
         [
@@ -117,8 +120,11 @@ class PersonnelOperationsController {
       }
 
       await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Кадровые операции", JSON.stringify(result.rows[0]))
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, old_version, update_at) VALUES (NOW(), $1, $2, $3, $4, NOW())"[
+          (req.user.specialistId,
+          "Кадровые операции",
+          JSON.stringify(result.rows[0]),
+          JSON.stringify(oldVersion))
         ]
       );
 
@@ -144,12 +150,6 @@ class PersonnelOperationsController {
       if (personnel_operations.rows.length > 0) {
         return res.status(404).json({ message: "Опреация не найдена" });
       }
-
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, deleted_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Кадровые операции", JSON.stringify(result.rows[0]))
-        ]
-      );
 
       await client.query("COMMIT");
     } catch (err) {

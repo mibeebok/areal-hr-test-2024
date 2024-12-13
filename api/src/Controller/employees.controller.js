@@ -4,7 +4,7 @@ const {
   createEmployeesSchema,
   getOneEmployeesSchema,
   updateEmployeesSchema,
-} = require ("./dto/employees.dto");
+} = require("./dto/employees.dto");
 
 //Employees
 class EmployeesController {
@@ -22,6 +22,7 @@ class EmployeesController {
       date_of_birth,
       passportData,
       registrationAdress,
+      file_path,
     } = req.body;
     try {
       await client.query("BEGIN");
@@ -36,7 +37,6 @@ class EmployeesController {
         ]
       );
 
-      // Получаем идентификатор новосозданного паспорта
       const id_passport_data = passportResult.rows[0].id;
 
       const adressResult = await client.query(
@@ -52,7 +52,6 @@ class EmployeesController {
         ]
       );
 
-      // Получаем идентификатор новосозданного адреса
       const id_registration_adress = adressResult.rows[0].id;
 
       const new_employees = await client.query(
@@ -69,21 +68,18 @@ class EmployeesController {
 
       const id_employees = new_employees.rows[0].id;
 
-      const file_path = req.body.file_path;
-      await client.query(
-        `INSERT INTO files (id_employees, name, file_path)
-        VALUES ($1, $2, $3)`,
-        [id_employees, name, file_path]
-      );
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Сотрудники", JSON.stringify(new_employees.rows[0]))
-        ]
-      );
+      if (file_path) {
+        await client.query(
+          `INSERT INTO files (id_employees, name, file_path)
+          VALUES ($1, $2, $3)`,
+          [id_employees, name, file_path]
+        );
+      }
+
       await client.query("COMMIT");
       res.status(201).json(new_employees.rows[0]);
     } catch (err) {
-      await client.query("RPLLBACK");
+      await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });
     } finally {
       client.release();
@@ -92,24 +88,27 @@ class EmployeesController {
   //GET
   async getEmployees(req, res) {
     try {
-      const employees = await pool.query(`SELECT 
-        e.*, 
-        p.series, 
-        p.number, 
-        p.date_of_issue, 
-        p.unit_code, 
-        p.issued_by_whom, 
-        r.region, 
-        r.locality, 
-        r.street, 
-        r.house, 
-        r.building, 
-        r.apartament,
-        files *
-    FROM employees e
-    LEFT JOIN passport_data p ON e.id_passport_data = p.id
-    LEFT JOIN registration_adress r ON e.id_registration_adress = r.id 
-    WHERE deleted_at is NULL`);
+      const employees = await pool.query(`
+        SELECT 
+          e.*, 
+          p.series, 
+          p.number, 
+          p.date_of_issue, 
+          p.unit_code, 
+          p.issued_by_whom, 
+          r.region, 
+          r.locality, 
+          r.street, 
+          r.house, 
+          r.building, 
+          r.apartament,
+          f.*  
+        FROM employees e
+        LEFT JOIN passport_data p ON e.id_passport_data = p.id
+        LEFT JOIN registration_address r ON e.id_registration_address = r.id 
+        LEFT JOIN files f ON e.id = f.id_employees  
+        WHERE e.deleted_at IS NULL
+      `);
       res.json(employees.rows);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -117,40 +116,47 @@ class EmployeesController {
   }
   //GET ONE
   async getOneEmployees(req, res) {
-    const { error } = getOneEmployeesSchema.validate(req.body);
+    const { error } = getOneEmployeesSchema.validate(req.params);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+
     const id = req.params.id;
     try {
       const employees = await pool.query(
         `SELECT 
-      e.*, 
-      p.series, 
-      p.number, 
-      p.date_of_issue, 
-      p.unit_code, 
-      p.issued_by_whom, 
-      r.region, 
-      r.locality, 
-      r.street, 
-      r.house, 
-      r.building, 
-      r.apartament,
-      files *
-    FROM employees e
-    LEFT JOIN passport_data p ON e.id_passport_data = p.id
-    LEFT JOIN registration_address r ON e.id_registration_address = r.id
-    WHERE e.id = $1`,
+                e.*, 
+                p.series, 
+                p.number, 
+                p.date_of_issue, 
+                p.unit_code, 
+                p.issued_by_whom, 
+                r.region, 
+                r.locality, 
+                r.street, 
+                r.house, 
+                r.building, 
+                r.apartament,
+                f.*  
+            FROM employees e
+            LEFT JOIN passport_data p ON e.id_passport_data = p.id
+            LEFT JOIN registration_address r ON e.id_registration_address = r.id
+            LEFT JOIN files f ON e.id = f.id_employees  
+            WHERE e.id = $1`,
         [id]
       );
+
       if (employees.rows.length > 0) {
         res.json(employees.rows[0]);
       } else {
         res.status(404).json({ message: "Сотрудник не найден" });
       }
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res
+        .status(500)
+        .json({
+          error: "Произошла ошибка при получении данных: " + err.message,
+        });
     }
   }
   //UPDATE
@@ -165,8 +171,20 @@ class EmployeesController {
     const id = req.params.id;
     const id_passport_data = passport.id;
     const id_registration_adress = adress.id;
+    let oldVersion;
+
     try {
       await client.query("BEGIN");
+
+      const result = await client.query(
+        "SELECT * FROM employees WHERE id = $1",
+        [id]
+      );
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Сотрудник не найден" });
+      }
+      oldVersion = result.rows[0];
+
       await client.query(
         `UPDATE passport_data 
          SET series = $1, number = $2, date_of_issue = $3, unit_code = $4, issued_by_whom = $5, update_at = NOW()
@@ -195,8 +213,9 @@ class EmployeesController {
           id_registration_adress,
         ]
       );
-      const employees = await client.query(
-        "UPDATE employees set first_name = $1, name = $2, patronymic = $3, date_of_birth = $4, id_passport_data = $5, id_registration_adress = $6, update_at = NOW() WHERE id = $7",
+
+      const employeesResult = await client.query(
+        "UPDATE employees SET first_name = $1, name = $2, patronymic = $3, date_of_birth = $4, id_passport_data = $5, id_registration_adress = $6, update_at = NOW() WHERE id = $7 RETURNING *",
         [
           first_name,
           name,
@@ -205,26 +224,33 @@ class EmployeesController {
           id_passport_data,
           id_registration_adress,
           id,
-          id_employees,
         ]
       );
-      const id_employees = employees.rows[0].id;
-      const file_path = req.body.file_path;
-      await client.query(
-        "UPDATE files set id_employees = $1, name =$2, file_path = $3 where id = $4",
-        [id_employees, name, file_path, id]
-      );
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Сотрудники", JSON.stringify(new_employees.rows[0]))
-        ]
-      );
-      await client.query("COMMIT");
 
       if (employeesResult.rowCount === 0) {
-        res.status(404).json({ message: "Сотрудник не найден" });
+        return res.status(404).json({ message: "Сотрудник не найден" });
       }
-      res.status(200).json({ employee: employeesResult.rows[0] });
+
+      const newEmployees = employeesResult.rows[0];
+
+      const file_path = req.body.file_path;
+      await client.query(
+        "UPDATE files SET id_employees = $1, name = $2, file_path = $3 WHERE id = $4",
+        [newEmployees.id, name, file_path, id]
+      );
+
+      await client.query(
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, old_version, update_at) VALUES (NOW(), $1, $2, $3, $4, NOW())",
+        [
+          req.user.specialistId,
+          "Сотрудники",
+          JSON.stringify(newEmployees),
+          JSON.stringify(oldVersion),
+        ]
+      );
+
+      await client.query("COMMIT");
+      res.status(200).json({ employee: newEmployees });
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });
@@ -238,37 +264,52 @@ class EmployeesController {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
+
       await client.query(
         `UPDATE files SET deleted_at = NOW() WHERE id_employees = $1`,
         [id]
       );
+
       const employeesResult = await client.query(
         `UPDATE employees SET deleted_at = NOW() WHERE id = $1`,
         [id]
       );
+
       if (employeesResult.rowCount === 0) {
-        res.status(404).json({ message: "Сотрудник не найден" });
+        return res.status(404).json({ message: "Сотрудник не найден" });
       }
-      await client.query(
-        `UPDATE passport_data
-        SET deleted_at = NOW()
-        WHERE id = $1`,
-        [id_passport_data]
-      );
-      await client.query(
-        `UPDATE registration_adress
-        SET deleted_at - NOW()
-        WHERE id = $1`,
-        [id_registration_adress]
+
+      const passportResult = await client.query(
+        `SELECT id_passport_data FROM employees WHERE id = $1`,
+        [id]
       );
 
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, deleted_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Сотрудники", JSON.stringify(new_employees.rows[0]))
-        ]
+      const id_passport_data = passportResult.rows[0]?.id_passport_data;
+
+      const registrationResult = await client.query(
+        `SELECT id_registration_adress FROM employees WHERE id = $1`,
+        [id]
       );
+
+      const id_registration_adress =
+        registrationResult.rows[0]?.id_registration_adress;
+
+      if (id_passport_data) {
+        await client.query(
+          `UPDATE passport_data SET deleted_at = NOW() WHERE id = $1`,
+          [id_passport_data]
+        );
+      }
+
+      if (id_registration_adress) {
+        await client.query(
+          `UPDATE registration_adress SET deleted_at = NOW() WHERE id = $1`,
+          [id_registration_adress]
+        );
+      }
+
       await client.query("COMMIT");
-      res.status(200).json({ messege: "Сотрудник удален" });
+      res.status(200).json({ message: "Сотрудник удален" });
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });

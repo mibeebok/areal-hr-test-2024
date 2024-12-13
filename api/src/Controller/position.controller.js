@@ -4,7 +4,7 @@ const {
   createPositionsSchema,
   getOnePositionsSchema,
   updatePositionsSchema,
-} = require ("./dto/position.dto");
+} = require("./dto/position.dto");
 
 //Position
 class PositionController {
@@ -21,11 +21,6 @@ class PositionController {
       const new_position = await client.query(
         "INSERT INTO positions (name, create_at) values ($1, NOW()) RETURNING *",
         [name]
-      );
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Должность", JSON.stringify(result.rows[0]))
-        ]
       );
       await client.query("COMMIT");
       res.status(201).json(new_position.rows[0]);
@@ -69,15 +64,21 @@ class PositionController {
   }
   //UPDATE
   async updatePositions(req, res) {
-    const {id} = req.params;
+    const { id } = req.params;
     const { error } = updatePositionsSchema.validate(req, body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     const client = await pool.connect();
     const { name } = req.body;
+    let oldVersion;
     try {
       await client.query("BEGIN");
+      await client.query("SELECT * FROM positions WHERE id = $1", [id]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Должность не найдена" });
+      }
+      oldVersion = result.rows[0];
       const positions = await client.query(
         "UPDATE positions SET name = $1, update_at = NOW() WHERE id = $2 RETURNING *",
         [name, id]
@@ -87,8 +88,11 @@ class PositionController {
       }
 
       await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Должность", JSON.stringify(result.rows[0]))
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, old_version, update_at) VALUES (NOW(), $1, $2, $3, $4, NOW())"[
+          (req.user.specialistId,
+          "Должность",
+          JSON.stringify(result.rows[0]),
+          JSON.stringify(oldVersion))
         ]
       );
       await client.query("COMMIT");
@@ -112,11 +116,6 @@ class PositionController {
         return res.status(404).json({ message: "Должность не найдена" });
       }
 
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_changed_it, the_object_of_operation, changed_fields, deleted_at) VALUES (NOW(), $1, $2, $3, NOW())"[
-          (req.user.specialistId, "Должность", JSON.stringify(result.rows[0]))
-        ]
-      );
       await client.query("COMMIT");
     } catch (err) {
       await client.query("ROLLBACK");

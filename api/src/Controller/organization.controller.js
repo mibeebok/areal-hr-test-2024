@@ -22,10 +22,7 @@ class OrganizationController {
         "INSERT INTO organizations (name, comment, create_at) VALUES ($1, $2, NOW()) RETURNING*",
         [name, comment]
       );
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_change_it, the_object_of_operation, changed_fields, create_at) VALUES (NOW(), $1, $2, $3, NOW())",
-        [req.user.id, "Организация", JSON.stringify(result.rows[0])]
-      );
+
       await client.query("COMMIT");
       res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -76,8 +73,14 @@ class OrganizationController {
     }
     const client = await pool.connect();
     const { name, comment } = req.body;
+    let oldVersion;
     try {
       await client.query("BEGIN");
+      await client.query("SELECT * FROM organizations WHERE id = $1", [id]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Организация не найдена" });
+      }
+      oldVersion = result.rows[0];
       const organizations = await client.query(
         "UPDATE organizations SET name = $1, comment = $2, update_at = NOW() WHERE id = $3 RETURNING *",
         [name, comment, id]
@@ -87,8 +90,13 @@ class OrganizationController {
       }
 
       await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_change_it, the_object_of_operation, changed_fields, update_at) VALUES (NOW(),$1, $2, $3, NOW())",
-        [req.user.id, "Организация", JSON.stringify(organizations.rows[0])]
+        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_change_it, the_object_of_operation, changed_fields, old_version, update_at) VALUES (NOW(),$1, $2, $3, $4, NOW())",
+        [
+          req.user.id,
+          "Организация",
+          JSON.stringify(organizations.rows[0]),
+          JSON.stringify(oldVersion),
+        ]
       );
       await client.query("COMMIT");
     } catch (err) {
@@ -105,16 +113,13 @@ class OrganizationController {
     try {
       await client.query("BEGIN");
       const organizations = await client.query(
-        "UPDATE organizations SET deleted_at = NOW() WHERE id = $1",[id]
+        "UPDATE organizations SET deleted_at = NOW() WHERE id = $1",
+        [id]
       );
       if (organizations.rowCount === 0) {
         return res.status(404).json({ message: "Организация не найдена" });
       }
 
-      await client.query(
-        "INSERT INTO history_of_change (date_and_time_of_the_operation, who_change_it, the_object_of_operation, changed_fields, deleted_at) VALUES (NOW(), $1, $2, $3, NOW())",
-        [req.user.id, "Организация", JSON.stringify(organizations.rows[0])]
-      );
       await client.query("COMMIT");
       return res.status(204).send();
     } catch (err) {

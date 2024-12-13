@@ -15,6 +15,7 @@ exports.up = (pgm) => {
     who_changed_it: { type: "integer", notNull: true },
     the_object_of_operation: { type: "varchar(100)", notNull: true },
     changed_fields: { type: "jsonb", notNull: true },
+    old_version: { type: "jsonb", notNull: false },
     deleted_at: { type: "varchar(50)", notNull: false },
     update_at: { type: "varchar(50)", notNull: false },
     create_at: { type: "varchar(50)", notNull: false },
