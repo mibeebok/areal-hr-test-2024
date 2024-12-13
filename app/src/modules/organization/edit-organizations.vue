@@ -22,7 +22,7 @@
     </div>
   </template>
   <script>
-  import axios from "axios";
+  import axiosInstance from '../../services/axiosInstance';
   
   export default {
     data() {
@@ -36,8 +36,8 @@
     methods: {
       async updateOrganization() {
         try {
-          const response = await axios.post(
-            "http://localhost:8081/Org/organization/:{this.id}",
+          const response = await axiosInstance.post(
+            `${process.env.VUE_APP_SERVER_URL}Org/organization/:{this.id}`,
             {
               name: this.name,
               comment: this.comment,

@@ -51,7 +51,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 import createDepartment from "./create-department.vue";
 import updateDepartment from "./edit-department.vue";
 
@@ -74,7 +74,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/Dep/departments`);
+        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Dep/departments`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -84,7 +84,7 @@ export default {
       const departmentId = prompt ("Введите ID для удаления: ");
       if (departmentId){
         try {
-          await axios.get ("http://localhost:8081/Dep/departments/:id", departmentId);
+          await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}ep/departments/:id`, departmentId);
           this.fetchData();
         } catch (error) {
           console.error ("Error deleting department: ", error);
@@ -95,7 +95,7 @@ export default {
       const getOneDepartments = prompt ("Введите ID для поиска: ");
       if (getOneDepartments){
         try{
-          const response = await axios.get ("http://localhost:8081/Dep/departments/:id", getOneDepartments);
+          const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}Dep/departments/:id`, getOneDepartments);
           this.items = response.data.departments || [];
         } catch (error) {
           console.error ("Error searching for department: ", error);

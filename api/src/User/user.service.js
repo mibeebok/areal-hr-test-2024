@@ -3,7 +3,7 @@ const { Injectable } = require('@nestjs/common');
 const { Pool } = require('pg');
 const argon2 = require('argon2');
 
-@Injectable()
+//@Injectable()
 class UserService {
     constructor() {
         // Настройка подключения к базе данных с использованием переменных окружения
@@ -38,7 +38,6 @@ class UserService {
             'INSERT INTO specialist (surname, name, id_avtorization, id_roles) VALUES ($1, $2, $3, $4) RETURNING *',
             ['Admin', 'Admin', avtorizationsId, roleId]
         );
-
         return specialistRes.rows[0];
     }
 
@@ -61,6 +60,7 @@ class UserService {
         } else {
             console.log(`Admin user already exists with email: ${adminEmail}`);
         }
+        console.log(`Inserting email: ${email}, password: ${hashedPassword}`);
     }
 }
 

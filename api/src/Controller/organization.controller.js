@@ -116,6 +116,7 @@ class OrganizationController {
         [req.user.id, "Организация", JSON.stringify(organizations.rows[0])]
       );
       await client.query("COMMIT");
+      return res.status(204).send();
     } catch (err) {
       await client.query("ROLLBACK");
       res.status(500).json({ error: err.message });

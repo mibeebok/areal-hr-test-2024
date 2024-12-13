@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const organization_router = require("./Router/organization.router");
 const department_router = require("./Router/department.router");
 const position_router = require("./Router/position.router");
@@ -11,6 +12,7 @@ const user_router = require ("./Router/specialist.router");
 const PORT = process.env.PORT || 8081;
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 
@@ -24,6 +26,7 @@ async function initializeAdmin() {
         console.error('Error initializing admin user:', error);
     }
 }
+
 
 
 initializeAdmin();

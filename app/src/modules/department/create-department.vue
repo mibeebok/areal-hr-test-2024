@@ -38,7 +38,7 @@
 </template>
 <script>
 import OrganizationList from "../organization/organization-list.vue";
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 
 export default {
   components: {
@@ -61,8 +61,8 @@ export default {
   methods: {
     async fetchOrganizations() {
       try {
-        const response = await axios.get(
-          "http://localhost:8081/Org/organizations"
+        const response = await axiosInstance.get(
+          `${process.env.VUE_APP_SERVER_URL}Org/organizations`
         );
         this.organizations = response.data;
       } catch (error) {
@@ -78,8 +78,8 @@ export default {
     },
     async createDepartment() {
       try {
-        const response = await axios.post(
-          "http://localhost:8081/Dep/departments",
+        const response = await axiosInstance.post(
+          `${process.env.VUE_APP_SERVER_URL}Dep/departments`,
           {
             orgCode: this.orgCode,
             parent: this.parent,

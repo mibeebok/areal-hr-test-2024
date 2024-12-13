@@ -72,7 +72,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 import employeesList from "../employees/employees-list.vue";
 import departmentsList from "../department/departments-list.vue";
 import positionsList from "../position/positions-list.vue";
@@ -108,7 +108,7 @@ export default {
   methods: {
     async fetchEmployees() {
       try{
-        const response = await axios.get("http://localhost:8081/Empl/employees");
+        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Empl/employees`);
         this.employees = response.data;
       }catch (error){
         console.error("Error fetching employees: ", error);
@@ -123,7 +123,7 @@ export default {
     },
     async fetchDepartment() {
       try{
-        const response = await axios.get("http://localhost:8081/Dep/department");
+        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Dep/department`);
         this.department = response.data;
       }catch (error){
         console.error("Error fetching department: ", error);
@@ -138,7 +138,7 @@ export default {
     },
     async fetchPosition() {
       try{
-        const response = await axios.get("http://localhost:8081/Pos/position");
+        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Pos/position`);
         this.position = response.data;
       }catch (error){
         console.error("Error fetching position: ", error);
@@ -153,8 +153,8 @@ export default {
     },
     async CreatePersonnelOperations() {
       try {
-        const response = await axios.post(
-          "http://localhost:8081/PerOP/personnel_operations",
+        const response = await axiosInstance.post(
+          `${process.env.VUE_APP_SERVER_URL}PerOP/personnel_operations`,
           {
             idEmpl: this.idEmpl,
             idDep: this.idDep,

@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 
 export default {
   data() {
@@ -26,8 +26,8 @@ export default {
   methods: {
     async CreatePositions() {
       try {
-        const response = await axios.post(
-          "http://localhost:8081/Pos/position",
+        const response = await axiosInstance.post(
+          `${process.env.VUE_APP_SERVER_URL}Pos/position`,
           {
             name: this.name,
           }

@@ -34,7 +34,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axiosInstance from '../../services/axiosInstance';
 export default{
     name: 'TableHistoryOfChange',
     data(){
@@ -48,7 +48,7 @@ export default{
     methods: {
         async fetchData() {
             try{
-                const response = await axios.get (`http://localhost:8081/His/history_of_change`);
+                const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}His/history_of_change`);
                 this.items = response.data;
             }catch (error){
                 console.error("Error fetching data: ", error);
@@ -58,7 +58,7 @@ export default{
           const getOneHistoryOfChange = prompt ("Введите ID для поиска: ");
           if (getOneHistoryOfChange){
             try{
-              const response = await axios.get ("hhtp://localhost:8081/His/history_of_change/:id", getOneHistoryOfChange);
+              const response = await axiosInstance.get ("hhtp://localhost:8081/His/history_of_change/:id", getOneHistoryOfChange);
               this.items = response.data.histirys || [];
             }catch (error){
               console.error("Error searching for history of change: ", error);

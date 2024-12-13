@@ -41,7 +41,7 @@
   <createFiles v-if="showFormCreateFil"/>
 </template>
 <script>
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 import createFiles from "./create-files.vue";
 
 export default {
@@ -61,7 +61,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/Fil/files`);
+        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Fil/files`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -72,7 +72,7 @@ export default {
       if(filesId){
 
       try{
-        await axios.get("http://localhost:8081/Fil/files/:id", filesId);
+        await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Fil/files/:id`, filesId);
         this.fetchData;
       }catch (error){
         console.error ("error deleting files: ", error);
@@ -83,7 +83,7 @@ export default {
       const getOneFiles = prompt ("Введите ID для поиска: ");
       if (getOneFiles){
         try{
-          const response = await axios.get ("http://localhost:8081/Fil/files/:id", getOneFiles);
+          const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}Fil/files/:id`, getOneFiles);
           this.items = response.data.files || [];
         }catch (error) {
           console.error ("Error searching for files: ", error);

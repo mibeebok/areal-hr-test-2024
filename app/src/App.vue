@@ -14,7 +14,6 @@
         </div>
         <div class="button">
           <button @click="setActiveComponent('department')">ОТДЕЛ</button>
-          <tableDepartment v-if="showDepartment" />
         </div>
         <div class="button">
           <button @click="setActiveComponent('position')">ДОЛЖНОСТЬ</button>
@@ -47,7 +46,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from './services/axiosInstance';
 import ModalAuth from './components/ModalAuth.vue'; 
 import TableDepartment from "./modules/department/table-department.vue";
 import TableEmployee from "./modules/employees/table-employees.vue";
@@ -79,7 +78,7 @@ export default {
   },
   async created() {
     try {
-      const response = await axios.get('http://localhost:8081');
+      const response = await axiosInstance.get('http://localhost:8081');
       this.data = response.data;
     } catch (error) {
       console.error('Error fetching: ', error);

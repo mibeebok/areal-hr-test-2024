@@ -64,7 +64,7 @@
   </template>
   
   <script>
-  import axios from "axios";
+  import axiosInstance from '../services/axiosInstance';
   
   export default {
     data() {
@@ -81,7 +81,7 @@
     methods: {
       async updateUser() {
           try{
-               await axios.post("http://localhost:8081/User/specialist/{this.id}",
+               await axiosInstance.post(`${process.env.VUE_APP_SERVER_URL}User/specialist/{this.id}`,
                   {
                       login: this.login,
                       password: this.password,

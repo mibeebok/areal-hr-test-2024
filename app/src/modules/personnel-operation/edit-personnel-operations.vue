@@ -76,7 +76,7 @@
     </div>
   </template>
   <script>
-  import axios from "axios";
+  import axiosInstance from '../../services/axiosInstance';
   import employeesList from "../employees/employees-list.vue";
   import departmentsList from "../department/departments-list.vue";
   import positionsList from "../position/positions-list.vue";
@@ -113,7 +113,7 @@
     methods: {
       async fetchEmployees() {
         try{
-          const response = await axios.get("http://localhost:8081/Empl/employees");
+          const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Empl/employees`);
           this.employees = response.data;
         }catch (error){
           console.error("Error fetching employees: ", error);
@@ -128,7 +128,7 @@
       },
       async fetchDepartment() {
         try{
-          const response = await axios.get("http://localhost:8081/Dep/department");
+          const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Dep/department`);
           this.department = response.data;
         }catch (error){
           console.error("Error fetching department: ", error);
@@ -143,7 +143,7 @@
       },
       async fetchPosition() {
         try{
-          const response = await axios.get("http://localhost:8081/Pos/position");
+          const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Pos/position`);
           this.position = response.data;
         }catch (error){
           console.error("Error fetching position: ", error);
@@ -158,8 +158,8 @@
       },
       async updatePersonnelOperations() {
         try{
-            await axios.put (
-                "http://localhost:8081/PerOP/personnel_operations/${this.id}",
+            await axiosInstance.put (
+                `${process.env.VUE_APP_SERVER_URL}PerOP/personnel_operations/${this.id}`,
                 {
                 id_employee: this.idEmpl,
                 id_department: this.idDep,

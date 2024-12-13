@@ -46,7 +46,7 @@
 </template>
   
   <script>
-  import axios from 'axios';
+  import axiosInstance from '../../services/axiosInstance';
   import ModalAuth from '../../components/ModalAuth.vue';
   import ModalCreateUser  from '../../components/ModalCreateUser.vue';
   import ModalEditUser  from '../../components/ModalEditUser.vue';
@@ -85,7 +85,7 @@
         }
       },
       fetchUsers() {
-        axios.get('http://localhost:8081/api/users')
+        axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}api/users`)
           .then(response => {
             this.users = response.data;
           })
@@ -108,7 +108,7 @@
         this.showEditUser  = false;
       },
       deleteUser (userId) {
-        axios.delete(`http://localhost:8081/api/users/${userId}`)
+        axiosInstance.delete(`${process.env.VUE_APP_SERVER_URL}api/users/${userId}`)
           .then(() => {
             this.fetchUsers(); // Обновляем список пользователей
           })

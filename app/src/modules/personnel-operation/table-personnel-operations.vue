@@ -57,7 +57,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 import CreatePersonnelOperations from "./create-personnel-operations.vue";
 import updatePersonnelOperations from "./edit-personnel-operations.vue";
 
@@ -80,7 +80,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`http://localhost:8081/PerOP`);
+        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}PerOP`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -90,8 +90,8 @@ export default {
       const operationId = prompt("Введите ID для удаления: ");
       if (operationId) {
         try {
-          await axios.get(
-            "http://localhost:8081/PerOP/personnel_operations/:id",{
+          await axiosInstance.get(
+            `${process.env.VUE_APP_SERVER_URL}PerOP/personnel_operations/:id`,{
               operationId
             }
           );
@@ -105,8 +105,8 @@ export default {
       const getOneOperation = prompt("Введите ID для поиска: ");
       if (getOneOperation) {
         try {
-          const response = await axios.get(
-            "http://localhost:8081/PerOP/personnel_operations/:id",{
+          const response = await axiosInstance.get(
+            `${process.env.VUE_APP_SERVER_URL}PerOP/personnel_operations/:id`,{
               getOneOperation
             }
           );

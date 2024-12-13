@@ -34,7 +34,7 @@
 </template>
 <script>
 import EmployeesList from "../employees/employees-list.vue";
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 
 export default {
   components: {
@@ -56,8 +56,8 @@ export default {
   methods: {
     async fetchEmployees() {
       try {
-        const response = await axios.get(
-          "http://localhost:8081/Empl/employees"
+        const response = await axiosInstance.get(
+          `${process.env.VUE_APP_SERVER_URL}Empl/employees`
         );
         this.employees = response.data;
       } catch (error) {
@@ -73,7 +73,7 @@ export default {
     },
     async createFiles() {
       try {
-        const response = await axios.post("http://localhost:8081/Fil/files", {
+        const response = await axiosInstance.post(`${process.env.VUE_APP_SERVER_URL}Fil/files`, {
           idEmpl: this.idEmpl,
           name: this.name,
           path: this.path,

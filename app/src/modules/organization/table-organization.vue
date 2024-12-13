@@ -45,7 +45,7 @@
     <updateOrganizaiton v-if="showFormUpdateOrg"/>
 </template>
 <script>
-import axios from 'axios'
+import axiosInstance from '../../services/axiosInstance'
 import createOrganization from './create-organization.vue';
 import updateOrganizaiton from "./edit-organizations.vue";
 export default{
@@ -57,6 +57,7 @@ export default{
     data(){
         return{
           showFormCreateOrg: false,
+          showFormUpdateOrg: false,
             items: [],
         };
     },
@@ -66,7 +67,7 @@ export default{
     methods: {
         async fetchData() {
             try{
-                const response = await axios.get(`http://localhost:8081/Org/organization`);
+                const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Org/organization`);
                 this.items = response.data;
             }catch (error){
                 console.error("Error fetching data: ", error);
@@ -76,7 +77,7 @@ export default{
           const organizationId = prompt("Введите ID записи для удаления: ");
           if (organizationId) {
             try {
-              await axios.get ("http://localhost:8081/Org/organization/:id", organizationId);
+              await axiosInstance.delete (`${process.env.VUE_APP_SERVER_URL}Org/organization/:${id}`, organizationId);
               this.fetchData();
             }catch (error) {
               console.error("Error deleting organization: ", error);
@@ -87,7 +88,7 @@ export default{
           const getOneOrganization = prompt ("Введите ID для поиска: ");
           if (getOneOrganization) {
             try{
-              const response = await axios.get ("http://localhost:8081/Org/organization/:id", getOneOrganization);
+              const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}Org/organization/:id`, getOneOrganization);
               this.items = response.data.organizations || [];
             } catch (error) {
               console.error("Error searching for organizations: ", error);

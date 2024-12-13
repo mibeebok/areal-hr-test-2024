@@ -97,7 +97,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axiosInstance from '../../services/axiosInstance';
 
 export default {
   data() {
@@ -126,8 +126,8 @@ export default {
   methods: {
     async createEmployees() {
       try {
-        const response = await axios.post(
-          "http://localhost:8081/Empl/employees",
+        const response = await axiosInstance.post(
+          `${process.env.VUE_APP_SERVER_URL}Empl/employees`,
           {
             firstName: this.firstName,
             name: this.name,

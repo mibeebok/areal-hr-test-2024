@@ -14,7 +14,7 @@
   </template>
   
   <script>
-  import axios from 'axios';
+  import axiosInstance from '../services/axiosInstance';
   export default {
     name: 'ModalAuth',
     data() {
@@ -27,7 +27,7 @@
     methods:  { 
         async handleLogin() {
       try {
-        const response = await axios.post('http://localhost:8081/Avt/login', {
+        const response = await axiosInstance.post(`${process.env.VUE_APP_SERVER_URL}Avt/login`, {
           login: this.login,
           password: this.password
         });

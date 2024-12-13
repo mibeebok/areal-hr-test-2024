@@ -11,8 +11,8 @@ exports.shorthands = undefined;
 exports.up = (pgm) => {
   pgm.createTable("avtorizations", {
     id: { type: "serial", primaryKey: true },
-    login: { type: "varchar(50)", notNull: true },
-    password: { type: "varchar(50)", notNull: true },
+    login: { type: "varchar(100)", notNull: true },
+    password: { type: "varchar(100)", notNull: true },
   });
 };
 

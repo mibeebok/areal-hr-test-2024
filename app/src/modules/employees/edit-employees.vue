@@ -101,7 +101,7 @@
     </div>
   </template>
   <script>
-  import axios from "axios";
+  import axiosInstance from '../../services/axiosInstance';
   
   export default {
     data() {
@@ -131,8 +131,8 @@
     methods: {
       async UpdateEmployees() {
         try {
-          const response = await axios.post(
-            "http://localhost:8081/Empl/employees/:{this.id}",
+          const response = await axiosInstance.post(
+            `${process.env.VUE_APP_SERVER_URL}Empl/employees/:{this.id}`,
             {
               firstName: this.firstName,
               name: this.name,
