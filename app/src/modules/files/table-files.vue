@@ -72,7 +72,7 @@ export default {
       if(filesId){
 
       try{
-        await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Fil/files/:id`, filesId);
+        await axiosInstance.get(`Fil/files/:id`, filesId);
         this.fetchData;
       }catch (error){
         console.error ("error deleting files: ", error);
@@ -83,7 +83,7 @@ export default {
       const getOneFiles = prompt ("Введите ID для поиска: ");
       if (getOneFiles){
         try{
-          const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}Fil/files/:id`, getOneFiles);
+          const response = await axiosInstance.get (`Fil/files/:id`, getOneFiles);
           this.items = response.data.files || [];
         }catch (error) {
           console.error ("Error searching for files: ", error);

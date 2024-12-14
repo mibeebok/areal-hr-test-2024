@@ -57,7 +57,7 @@ export default {
     async fetchEmployees() {
       try {
         const response = await axiosInstance.get(
-          `${process.env.VUE_APP_SERVER_URL}Empl/employees`
+          `Empl/employees`
         );
         this.employees = response.data;
       } catch (error) {
@@ -73,7 +73,7 @@ export default {
     },
     async createFiles() {
       try {
-        const response = await axiosInstance.post(`${process.env.VUE_APP_SERVER_URL}Fil/files`, {
+        const response = await axiosInstance.post(`Fil/files`, {
           idEmpl: this.idEmpl,
           name: this.name,
           path: this.path,

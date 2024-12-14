@@ -27,7 +27,7 @@ export default {
     async CreatePositions() {
       try {
         const response = await axiosInstance.post(
-          `${process.env.VUE_APP_SERVER_URL}Pos/position`,
+          `Pos/position`,
           {
             name: this.name,
           }

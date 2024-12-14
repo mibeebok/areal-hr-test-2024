@@ -81,7 +81,7 @@
     methods: {
       async updateUser() {
           try{
-               await axiosInstance.post(`${process.env.VUE_APP_SERVER_URL}User/specialist/{this.id}`,
+               await axiosInstance.post(`User/specialist/{this.id}`,
                   {
                       login: this.login,
                       password: this.password,

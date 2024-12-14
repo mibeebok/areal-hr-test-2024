@@ -88,7 +88,7 @@ export default {
     async updateDepartment() {
       try {
         await axiosInstance.put(
-          `${process.env.VUE_APP_SERVER_URL}Dep/departments/${this.id}`,
+          `Dep/departments/${this.id}`,
           {
             id_organization: this.orgCode,
             parent: this.parent,

@@ -108,7 +108,7 @@ export default {
   methods: {
     async fetchEmployees() {
       try{
-        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Empl/employees`);
+        const response = await axiosInstance.get(`Empl/employees`);
         this.employees = response.data;
       }catch (error){
         console.error("Error fetching employees: ", error);
@@ -123,7 +123,7 @@ export default {
     },
     async fetchDepartment() {
       try{
-        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Dep/department`);
+        const response = await axiosInstance.get(`Dep/department`);
         this.department = response.data;
       }catch (error){
         console.error("Error fetching department: ", error);
@@ -138,7 +138,7 @@ export default {
     },
     async fetchPosition() {
       try{
-        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Pos/position`);
+        const response = await axiosInstance.get(`Pos/position`);
         this.position = response.data;
       }catch (error){
         console.error("Error fetching position: ", error);
@@ -154,7 +154,7 @@ export default {
     async CreatePersonnelOperations() {
       try {
         const response = await axiosInstance.post(
-          `${process.env.VUE_APP_SERVER_URL}PerOP/personnel_operations`,
+          `PerOP/personnel_operations`,
           {
             idEmpl: this.idEmpl,
             idDep: this.idDep,

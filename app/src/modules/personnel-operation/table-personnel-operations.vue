@@ -80,7 +80,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}PerOP`);
+        const response = await axiosInstance.get(`PerOP`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -91,7 +91,7 @@ export default {
       if (operationId) {
         try {
           await axiosInstance.get(
-            `${process.env.VUE_APP_SERVER_URL}PerOP/personnel_operations/:id`,{
+            `PerOP/personnel_operations/:id`,{
               operationId
             }
           );
@@ -106,7 +106,7 @@ export default {
       if (getOneOperation) {
         try {
           const response = await axiosInstance.get(
-            `${process.env.VUE_APP_SERVER_URL}PerOP/personnel_operations/:id`,{
+            `PerOP/personnel_operations/:id`,{
               getOneOperation
             }
           );

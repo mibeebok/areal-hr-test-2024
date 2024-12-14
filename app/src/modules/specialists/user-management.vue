@@ -108,7 +108,7 @@
         this.showEditUser  = false;
       },
       deleteUser (userId) {
-        axiosInstance.delete(`${process.env.VUE_APP_SERVER_URL}api/users/${userId}`)
+        axiosInstance.delete(`api/users/${userId}`)
           .then(() => {
             this.fetchUsers(); // Обновляем список пользователей
           })

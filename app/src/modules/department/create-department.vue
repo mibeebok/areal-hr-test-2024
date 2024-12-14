@@ -62,7 +62,7 @@ export default {
     async fetchOrganizations() {
       try {
         const response = await axiosInstance.get(
-          `${process.env.VUE_APP_SERVER_URL}Org/organizations`
+          `Org/organizations`
         );
         this.organizations = response.data;
       } catch (error) {
@@ -79,7 +79,7 @@ export default {
     async createDepartment() {
       try {
         const response = await axiosInstance.post(
-          `${process.env.VUE_APP_SERVER_URL}Dep/departments`,
+          `Dep/departments`,
           {
             orgCode: this.orgCode,
             parent: this.parent,

@@ -48,7 +48,7 @@ export default{
     methods: {
         async fetchData() {
             try{
-                const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}His/history_of_change`);
+                const response = await axiosInstance.get (`His/history_of_change`);
                 this.items = response.data;
             }catch (error){
                 console.error("Error fetching data: ", error);

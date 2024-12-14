@@ -32,7 +32,7 @@
       async updatePositions() {
         try {
           const response = await axiosInstance.post(
-            `${process.env.VUE_APP_SERVER_URL}Pos/position/:{this.id}`,
+            `Pos/position/:{this.id}`,
             {
               name: this.name,
             }

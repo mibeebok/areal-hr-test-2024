@@ -132,7 +132,7 @@
       async UpdateEmployees() {
         try {
           const response = await axiosInstance.post(
-            `${process.env.VUE_APP_SERVER_URL}Empl/employees/:{this.id}`,
+            `Empl/employees/:{this.id}`,
             {
               firstName: this.firstName,
               name: this.name,

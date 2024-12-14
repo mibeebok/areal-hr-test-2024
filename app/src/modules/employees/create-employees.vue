@@ -127,7 +127,7 @@ export default {
     async createEmployees() {
       try {
         const response = await axiosInstance.post(
-          `${process.env.VUE_APP_SERVER_URL}Empl/employees`,
+          `Empl/employees`,
           {
             firstName: this.firstName,
             name: this.name,

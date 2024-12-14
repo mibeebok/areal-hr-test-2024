@@ -81,7 +81,7 @@ export default {
   methods: {
     async createUser() {
         try{
-            await axiosInstance.post(`${process.env.VUE_APP_SERVER_URL}User/specialist`,
+            await axiosInstance.post(`User/specialist`,
                 {
                     login: this.login,
                     password: this.password,

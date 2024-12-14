@@ -27,7 +27,7 @@
     methods:  { 
         async handleLogin() {
       try {
-        const response = await axiosInstance.post(`${process.env.VUE_APP_SERVER_URL}Avt/login`, {
+        const response = await axiosInstance.post(`Avt/login`, {
           login: this.login,
           password: this.password
         });

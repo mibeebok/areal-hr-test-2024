@@ -159,7 +159,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Empl/employees`);
+        const response = await axiosInstance.get(`Empl/employees`);
         this.items = response.data.employees || [];
         this.passportItems = response.data.passports || [];
         this.adressItems = response.data.adresses || [];
@@ -172,7 +172,7 @@ export default {
       const employeesId = prompt ("Введите ID для удаления: ");
       if (employeesId) {
         try{
-          await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}Empl/employees/:id`, employeesId);
+          await axiosInstance.get (`Empl/employees/:id`, employeesId);
           this.fetchData();
         }catch (error) {
           console.error ("Error deleting employees: ", error);
@@ -183,7 +183,7 @@ export default {
       const getOneEmployees = prompt ("Введите ID для поиска: ");
       if (getOneEmployees) {
         try{
-          const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}Empl/employees/:id`, getOneEmployees);
+          const response = await axiosInstance.get (`Empl/employees/:id`, getOneEmployees);
           this.items = response.data.employees || [];
         }catch (error){
           console.error ("Error searching for employees: ", error);

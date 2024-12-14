@@ -69,7 +69,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_SERVER_URL}Pos/positions`);
+        const response = await axios.get(`Pos/positions`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetchjng data: ", error);
@@ -79,7 +79,7 @@ export default {
       const positionId = prompt("Введите ID для удаления: ");
       if (positionId) {
         try {
-          await axios.get(`${process.env.VUE_APP_SERVER_URL}Pos/positions/:id`, positionId);
+          await axios.get(`Pos/positions/:id`, positionId);
           this.fetchData();
         } catch (error) {
           console.error("Error deleting position: ", error);
@@ -90,7 +90,7 @@ export default {
       const getOnePosition = prompt ("Введите ID для поиска: ");
       if(getOnePosition){
         try{
-          const response = await axios.get(`${process.env.VUE_APP_SERVER_URL}Pos/positions/:id`, getOnePosition);
+          const response = await axios.get(`Pos/positions/:id`, getOnePosition);
           this.items = response.data.positions || [];
         } catch(error) {
           console.error ("Error searching for position: ", error);

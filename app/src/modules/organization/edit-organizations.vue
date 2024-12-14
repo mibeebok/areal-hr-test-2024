@@ -37,7 +37,7 @@
       async updateOrganization() {
         try {
           const response = await axiosInstance.post(
-            `${process.env.VUE_APP_SERVER_URL}Org/organization/:{this.id}`,
+            `Org/organization/:{this.id}`,
             {
               name: this.name,
               comment: this.comment,

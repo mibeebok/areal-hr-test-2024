@@ -67,7 +67,7 @@ export default{
     methods: {
         async fetchData() {
             try{
-                const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Org/organization`);
+                const response = await axiosInstance.get(`Org/organization`);
                 this.items = response.data;
             }catch (error){
                 console.error("Error fetching data: ", error);
@@ -77,7 +77,7 @@ export default{
           const organizationId = prompt("Введите ID записи для удаления: ");
           if (organizationId) {
             try {
-              await axiosInstance.delete (`${process.env.VUE_APP_SERVER_URL}Org/organization/:${id}`, organizationId);
+              await axiosInstance.delete (`Org/organization/:${organizationId}`);
               this.fetchData();
             }catch (error) {
               console.error("Error deleting organization: ", error);
@@ -88,8 +88,8 @@ export default{
           const getOneOrganization = prompt ("Введите ID для поиска: ");
           if (getOneOrganization) {
             try{
-              const response = await axiosInstance.get (`${process.env.VUE_APP_SERVER_URL}Org/organization/:id`, getOneOrganization);
-              this.items = response.data.organizations || [];
+              const response = await axiosInstance.get (`Org/organization/:${getOneOrganization}`);
+              this.items = [response.data];
             } catch (error) {
               console.error("Error searching for organizations: ", error);
             }

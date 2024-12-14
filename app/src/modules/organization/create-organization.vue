@@ -32,7 +32,7 @@ export default {
     async createOrganization() {
       try {
         const response = await axiosInstance.post(
-          `${process.env.VUE_APP_SERVER_URL}Org/organization`,
+          `Org/organization`,
           {
             name: this.name,
             comment: this.comment,
