@@ -14,7 +14,13 @@ const admin_user = require("./first-admin-user.controller")
 const PORT = process.env.PORT || 8081;
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:8080',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, 
+}));
+
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,6 +47,11 @@ app.use("/Pos", position_router);
 app.use("/Empl", employees_router);
 app.use("/PerOP", personnel_operations_router);
 app.use("/His", history_of_change_router);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Что-то пошло не так!');
+});
 
 async function init() {
   await admin_user.firstAdminUser();

@@ -58,7 +58,7 @@ export default{
           const getOneHistoryOfChange = prompt ("Введите ID для поиска: ");
           if (getOneHistoryOfChange){
             try{
-              const response = await axiosInstance.get ("hhtp://localhost:8081/His/history_of_change/:id", getOneHistoryOfChange);
+              const response = await axiosInstance.get (`His/history_of_change/:${getOneHistoryOfChange}`);
               this.items = response.data.histirys || [];
             }catch (error){
               console.error("Error searching for history of change: ", error);

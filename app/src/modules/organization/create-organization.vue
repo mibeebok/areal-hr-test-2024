@@ -5,7 +5,7 @@
       <form @submit.prevent="createOrganization">
         <div class="container2">
           <label for="name">Название: </label>
-          <input type="text" id="name" v-model="name" required />
+          <input type="text" id="name" v-model="name" required autocomplete="name" />
         </div>
         <div class="container2">
           <label for="comment">Комментарий: </label>

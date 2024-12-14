@@ -91,9 +91,7 @@ export default {
       if (operationId) {
         try {
           await axiosInstance.get(
-            `PerOP/personnel_operations/:id`,{
-              operationId
-            }
+            `PerOP/personnel_operations/:${operationId}`
           );
           this.fetchData();
         } catch (error) {
@@ -106,9 +104,7 @@ export default {
       if (getOneOperation) {
         try {
           const response = await axiosInstance.get(
-            `PerOP/personnel_operations/:id`,{
-              getOneOperation
-            }
+            `PerOP/personnel_operations/:${getOneOperation}`
           );
           this.items = response.data.operations || [];
         } catch (error) {

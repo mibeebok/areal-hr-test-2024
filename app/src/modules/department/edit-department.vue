@@ -37,6 +37,8 @@
         </div>
       </form>
     </div>
+      <input v-model="id" type="text" placeholder="Введите ID записи" />
+      <button @click="fetchDepartment">Загрузить данные</button>
     <button @click="updateDepartment">Сохранить</button>
     <p v-if="message">{{ message }}</p>
   </div>
@@ -85,6 +87,21 @@ export default {
     hideOrgList() {
       this.showOrgList = false; 
     },
+
+    async fetchDepartment () {
+      try{
+        const response = await axiosInstance.get(`Dep/departments/${this.id}`);
+        this.id = response.data.id;
+        this.orgCode = response.data.orgCode;
+        this.parent = response.data.parent;
+        this.name = response.data.name;
+        this.comment = response.data.comment;
+        this.message = "";
+      }catch (error){
+          this.message = `Ошибка при загрузке данных: ${error.response ? error.response.data.error : error.message}`;
+        }
+    },
+
     async updateDepartment() {
       try {
         await axiosInstance.put(

@@ -17,6 +17,8 @@
           </div>
         </form>
       </div>
+      <input v-model="id" type="text" placeholder="Введите ID записи" />
+      <button @click="fetchOrganization">Загрузить данные</button>
       <button type="submit">Сохранить</button>
       <p v-if="message">{{ message }}</p>
     </div>
@@ -34,10 +36,20 @@
       };
     },
     methods: {
+      async fetchOrganization() {
+        try{
+          const response = await axiosInstance.get(`Org/organization/:${this.id}`);
+          this.name = response.data.name;
+          this.comment = response.data.comment;
+          this.message = '';
+        }catch (error){
+          this.message = `Ошибка при загрузке данных: ${error.response ? error.response.data.error : error.message}`;
+        }
+      },
       async updateOrganization() {
         try {
           const response = await axiosInstance.post(
-            `Org/organization/:{this.id}`,
+            `Org/organization/:${this.id}`,
             {
               name: this.name,
               comment: this.comment,

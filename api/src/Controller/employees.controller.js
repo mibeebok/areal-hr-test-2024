@@ -105,12 +105,13 @@ class EmployeesController {
           f.*  
         FROM employees e
         LEFT JOIN passport_data p ON e.id_passport_data = p.id
-        LEFT JOIN registration_address r ON e.id_registration_address = r.id 
+        LEFT JOIN registration_adress r ON e.id_registration_adress = r.id 
         LEFT JOIN files f ON e.id = f.id_employees  
         WHERE e.deleted_at IS NULL
       `);
       res.json(employees.rows);
     } catch (err) {
+      console.error('Error fetching employees:', err);
       res.status(500).json({ error: err.message });
     }
   }
@@ -140,7 +141,7 @@ class EmployeesController {
                 f.*  
             FROM employees e
             LEFT JOIN passport_data p ON e.id_passport_data = p.id
-            LEFT JOIN registration_address r ON e.id_registration_address = r.id
+            LEFT JOIN registration_adress r ON e.id_registration_address = r.id
             LEFT JOIN files f ON e.id = f.id_employees  
             WHERE e.id = $1`,
         [id]
@@ -200,7 +201,7 @@ class EmployeesController {
       );
 
       await client.query(
-        `UPDATE registration_address 
+        `UPDATE registration_adress 
          SET region = $1, locality = $2, street = $3, house = $4, building = $5, apartament = $6, update_at = NOW()
          WHERE id = $7`,
         [

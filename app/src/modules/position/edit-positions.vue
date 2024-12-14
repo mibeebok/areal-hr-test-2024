@@ -13,6 +13,8 @@
           </div>
         </form>
       </div>
+      <input v-model="id" type="text" placeholder="Введите ID записи" />
+      <button @click="fetchPosition">Загрузить данные</button>
       <button type="submit">Сохранить</button>
       <p v-if="message">{{ message }}</p>
     </div>
@@ -29,10 +31,19 @@
       };
     },
     methods: {
+      async fetchPosition () {
+        try{
+          const response = await axiosInstance.get(`Pos/position/:${this.id}`);
+          this.name = response.data.name;
+          this.message ='';
+        } catch (error){
+          this.message = `Ошибка при загрузке данных: ${error.response ? error.response.data.error : error.message}`;
+        }
+      },
       async updatePositions() {
         try {
           const response = await axiosInstance.post(
-            `Pos/position/:{this.id}`,
+            `Pos/position/:${this.id}`,
             {
               name: this.name,
             }

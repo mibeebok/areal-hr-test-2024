@@ -61,7 +61,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axiosInstance.get(`${process.env.VUE_APP_SERVER_URL}Fil/files`);
+        const response = await axiosInstance.get(`Fil/files`);
         this.items = response.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -72,7 +72,7 @@ export default {
       if(filesId){
 
       try{
-        await axiosInstance.get(`Fil/files/:id`, filesId);
+        await axiosInstance.get(`Fil/files/:${filesId}`);
         this.fetchData;
       }catch (error){
         console.error ("error deleting files: ", error);
@@ -83,7 +83,7 @@ export default {
       const getOneFiles = prompt ("Введите ID для поиска: ");
       if (getOneFiles){
         try{
-          const response = await axiosInstance.get (`Fil/files/:id`, getOneFiles);
+          const response = await axiosInstance.get (`Fil/files/:${getOneFiles}`);
           this.items = response.data.files || [];
         }catch (error) {
           console.error ("Error searching for files: ", error);

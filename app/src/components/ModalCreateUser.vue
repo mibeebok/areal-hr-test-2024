@@ -53,7 +53,7 @@
           <input
             type="text"
             v-model="roles"
-            placeholder="Роль"
+            placeholder="Роль 1-администратор 2- hr-специалист"
           />
         </div>
         <button type="submit">Создать</button>
@@ -81,7 +81,7 @@ export default {
   methods: {
     async createUser() {
         try{
-            await axiosInstance.post(`User/specialist`,
+            await axiosInstance.post(`Auth/registration`,
                 {
                     login: this.login,
                     password: this.password,

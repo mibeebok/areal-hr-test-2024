@@ -95,7 +95,8 @@
             <input type="text" id="path" v-model="path" required/>
           </div>
         </div>
-  
+      <input v-model="id" type="text" placeholder="Введите ID записи" />
+      <button @click="fetchEmployees">Загрузить данные</button>
       <button @click="UpdateEmployees">Сохранить</button>
       <p v-if="message">{{ message }}</p>
     </div>
@@ -129,10 +130,36 @@
       };
     },
     methods: {
+      async fetchEmployees() {
+        try{
+          const response = await axiosInstance.get(`Empl/employees/:${this.id}`);
+              this.firstName = response.data.firstName;
+              this.name = response.data.name;
+              this.patrinymic = response.data.patrinymic;
+              this.dateBirth = response.data.dateBirth;
+              this.series = response.data.series;
+              this.number = response.data.number;
+              this.dateBirth = response.data.dateBirth;
+              this.unitCode = response.data.unitCode;
+              this.whoIssued = response.data.whoIssued;
+              this.region = response.data.region;
+              this.locality = response.data.locality;
+              this.street = response.data.street;
+              this.house = response.data.house;
+              this.building = response.data.building;
+              this.apartment = response.data.apartment;
+              this.idEmpl = response.data.idEmpl;
+              this.name = response.data.name;
+              this.path = response.data.path;
+              this.message = '';
+        }catch (error){
+          this.message = `Ошибка при загрузке данных: ${error.response ? error.response.data.error : error.message}`;
+        }
+      },
       async UpdateEmployees() {
         try {
           const response = await axiosInstance.post(
-            `Empl/employees/:{this.id}`,
+            `Empl/employees/:${this.id}`,
             {
               firstName: this.firstName,
               name: this.name,

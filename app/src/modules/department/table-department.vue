@@ -84,7 +84,7 @@ export default {
       const departmentId = prompt ("Введите ID для удаления: ");
       if (departmentId){
         try {
-          await axiosInstance.get (`Dep/departments/:id`, departmentId);
+          await axiosInstance.get (`Dep/departments/:${departmentId}`);
           this.fetchData();
         } catch (error) {
           console.error ("Error deleting department: ", error);
@@ -95,7 +95,7 @@ export default {
       const getOneDepartments = prompt ("Введите ID для поиска: ");
       if (getOneDepartments){
         try{
-          const response = await axiosInstance.get (`Dep/departments/:id`, getOneDepartments);
+          const response = await axiosInstance.get (`Dep/departments/:${getOneDepartments}`);
           this.items = response.data.departments || [];
         } catch (error) {
           console.error ("Error searching for department: ", error);

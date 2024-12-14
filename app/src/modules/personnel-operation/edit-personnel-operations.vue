@@ -71,6 +71,8 @@
           </div>
         </form>
       </div>
+      <input v-model="id" type="text" placeholder="Введите ID записи" />
+      <button @click="fetchPersonnelOperations">Загрузить данные</button>
       <button @click="updatePersonnelOperations">Редактировать</button>
       <p v-if="message">{{ message }}</p>
     </div>
@@ -156,10 +158,26 @@
       hidePosList() {
         this.showPosList = false;
       },
+
+      async fetchPersonnelOperations() {
+        try {
+            const response = await axiosInstance.get(`PerOP/personnel_operations/:${this.id}`);
+            this.idEmpl = response.data.id_employee;
+            this.idDep = response.data.id_department;
+            this.idPos = response.data.id_position;
+            this.setSalary = response.data.setting_the_salary;
+            this.changeSalary = response.data.salary_change;
+            this.dismissal = response.data.dismissal_from_work;
+            this.message = ''; 
+        } catch (error) {
+            this.message = `Ошибка при загрузке данных: ${error.response ? error.response.data.error : error.message}`;
+        }
+    },
+
       async updatePersonnelOperations() {
         try{
             await axiosInstance.put (
-                `PerOP/personnel_operations/${this.id}`,
+                `PerOP/personnel_operations/:${this.id}`,
                 {
                 id_employee: this.idEmpl,
                 id_department: this.idDep,

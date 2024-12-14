@@ -172,7 +172,7 @@ export default {
       const employeesId = prompt ("Введите ID для удаления: ");
       if (employeesId) {
         try{
-          await axiosInstance.get (`Empl/employees/:id`, employeesId);
+          await axiosInstance.get (`Empl/employees/:${employeesId}`);
           this.fetchData();
         }catch (error) {
           console.error ("Error deleting employees: ", error);
@@ -183,7 +183,7 @@ export default {
       const getOneEmployees = prompt ("Введите ID для поиска: ");
       if (getOneEmployees) {
         try{
-          const response = await axiosInstance.get (`Empl/employees/:id`, getOneEmployees);
+          const response = await axiosInstance.get (`Empl/employees/:${getOneEmployees}`);
           this.items = response.data.employees || [];
         }catch (error){
           console.error ("Error searching for employees: ", error);

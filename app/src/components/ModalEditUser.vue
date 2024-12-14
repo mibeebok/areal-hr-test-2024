@@ -81,7 +81,7 @@
     methods: {
       async updateUser() {
           try{
-               await axiosInstance.post(`User/specialist/{this.id}`,
+               await axiosInstance.post(`Auth/registration/:${this.id}`,
                   {
                       login: this.login,
                       password: this.password,
