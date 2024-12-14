@@ -14,10 +14,7 @@ exports.up = (pgm) => {
     caption: { type: "varchar (100)", notNull: true },
   });
   //справочник ролей по умолчанию
-  pgm.insert("roles", ["caption"], [
-    ["administration"],
-    ["hr-specialist"],
-  ]);
+  pgm.sql("INSERT INTO roles (caption) VALUES ('administrator'), ('hr-specialist')");
 };
 
 /**
