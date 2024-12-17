@@ -72,6 +72,11 @@ class authController{
 }
 
 passport.use(new LocalStrategy(
+    //Todo добавил это, разберись почему
+    {
+        usernameField: 'login',
+        passwordField: 'password',
+    },
     async (username, password, done) => {
         const client = await pool.connect();
         try {

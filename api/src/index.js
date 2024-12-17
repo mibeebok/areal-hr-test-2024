@@ -11,13 +11,14 @@ const history_of_change_router = require("./Router/history-of-change.router");
 const auth_router = require("./Router/auth.router")
 const admin_user = require("./first-admin-user.controller")
 
+//Todo порт не подтягивается из .env файла из корня проекта. Разберись почему и исправь
 const PORT = process.env.PORT || 8081;
 
 const app = express();
 app.use(cors({
   origin: 'http://localhost:8080',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, 
+  credentials: true,
 }));
 
 app.options('*', cors());
@@ -54,6 +55,7 @@ app.use((err, req, res, next) => {
 });
 
 async function init() {
+  //Todo admina лучше создавать один раз из миграции или описать инструкцию, что надо сделать(чтобы добавить его)
   await admin_user.firstAdminUser();
   app.listen(PORT, "0.0.0.0", () =>
     console.log(`server started on post ${PORT}`)
